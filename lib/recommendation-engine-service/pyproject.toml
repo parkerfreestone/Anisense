@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "recommendation-engine-service"
+version = "0.1.0"
+description = ""
+authors = ["Parker Freestone <parkerfreestone@gmail.com>"]
+readme = "README.md"
+packages = [{include = "recommendation_engine_service"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.96.0"
+uvicorn = "^0.22.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
