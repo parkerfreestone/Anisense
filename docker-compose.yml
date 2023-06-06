@@ -1,0 +1,24 @@
+version: "3"
+services:
+  user-management-service:
+    build:
+      context: ./lib/user-management-service
+    ports:
+      - 8000:8000
+  recommendation-engine:
+    build:
+      context: ./lib/recommendation-engine
+    ports:
+      - 8001:8001
+  web-app:
+    build:
+      context: ./web-app
+    ports:
+      - 3000:3000
+  mobile-app:
+    build:
+      context: ./mobile-app
+    ports:
+      - 19000:19000
+      - 19001:19001
+      - 19002:19002
