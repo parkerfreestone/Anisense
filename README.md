@@ -1,44 +1,35 @@
-# 🌌 AniSense - Personalized Anime Universe
+# AnimeSense 🚀
 
-## 📝 Description
+AnimeSense is a comprehensive platform that provides anime recommendations, user interaction, content management, and search capabilities, built with Laravel, Python, React, and React Native/Expo.
 
-AniSense is a platform offering personalized anime content and community features. The service is powered by advanced machine learning algorithms that adapt to user preferences over time, providing unique recommendations tailored to each individual user.
+## Services 📦
 
-## 💻 Prospective Tech Stack
+### User Service 👥
 
-- **Frontend:** React (Web App), React Native (Mobile App) 📱
-- **Backend:** Laravel (User Authentication, Content Management, Rating & Review, Realtime Notification Service), FastAPI (Recommendation Engine) 🚀
-- **Database:** MySQL 💾
-- **Queueing:** AWS SQS or RabbitMQ 📨
-- **Caching:** Redis 💽
-- **Search:** ElasticSearch 🔍
+The User Service is responsible for user management, authentication, social interaction, user anime lists, and notifications. This service uses Laravel.
 
-## 🚀 Prospective Services
+### Anime Service 📺
 
-1. `user-authentication`: Manages user data and authentication services. 🔐
-2. `content-management`: Handles the storage, retrieval, and management of anime content. 🗂️
-3. `recommendation-engine`: Powers the personalized anime recommendations using machine learning algorithms. 🤖
-4. `rating-review`: Manages user ratings and reviews for various anime. ⭐
-5. `realtime-notification-service`: Handles user notifications and alerts. 🛎️
-6. `social-interaction`: Manages user interactions, such as comments and sharing. 💬
-7. `search-optimization`: Optimizes the search functionality for improved user experience. 🔍
+The Anime Service is in charge of managing anime content and handling all search functionalities. This service uses Laravel.
 
-## 🚀 Local Setup
+### Recommendation Service ⭐️
 
-1. Clone the repository: `git clone https://github.com/yourusername/anisense.git`
-2. Navigate into the directory: `cd anisense`
-3. Install dependencies in each service and start each one following their individual READMEs.
-4. For the web and mobile app, refer to their respective READMEs for setup and start instructions.
-5. This will obviously be updated.
+The Recommendation Service handles everything related to recommendations and user reviews/ratings. This service uses Python (FastAPI).
 
-## 🌐 Deployment
+## Frontend Apps 💻📱
 
-Details about how to deploy each service and the overall system.
+### Web App 🌐
 
-## 🤝 Contribution
+The web application provides the user interface for desktop and laptop users. This app uses React.
 
-Guidelines for contributing to this project.
+### Mobile App 📱
 
-## ©️ License
+The mobile application provides the user interface for smartphone users. This app uses React Native/Expo.
 
-Information about the project's license.
+## Running the project 🛠️
+
+To run the project, make sure you have Docker installed. Navigate to the root directory and run `docker-compose up`.
+
+---
+
+_This is a prospective structure and technologies for the application. Changes and adjustments might occur as the project progresses._

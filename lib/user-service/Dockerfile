@@ -1,35 +1,13 @@
-FROM php:7.4-apache
+FROM php:8.1-fpm
 
-# Install necessary packages and PHP extensions
-RUN apt-get update && apt-get install -y \
-    zlib1g-dev \
-    libpng-dev \
-    libxml2-dev \
-    libzip-dev \
-    libonig-dev \
-    zip \
-    curl \
-    unzip \
-    git \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip xml
+WORKDIR /app
 
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
+COPY . /app
 
-# Copy application source
-COPY . /var/www/html
-
-# Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install dependencies
 RUN composer install
 
-# Modify permissions to make sure Laravel can write to necessary directories
-RUN chown -R www-data:www-data \
-        /var/www/html/storage \
-        /var/www/html/bootstrap/cache
+EXPOSE 8001
 
-# Expose port 80 and start Apache service
-EXPOSE 80
-CMD ["apache2-foreground"]
+CMD php artisan serve --host=0.0.0.0 --port=8001
