@@ -1,10 +1,10 @@
-# AnimeSense 🚀
+# 🌌 Anisense
 
 AnimeSense is a comprehensive platform that provides anime recommendations, user interaction, content management, and search capabilities, built with Laravel, Python, React, and React Native/Expo.
 
-## Services 📦
+## 📦 Services
 
-### User Service 👥
+### User Service 👥 
 
 The User Service is responsible for user management, authentication, social interaction, user anime lists, and notifications. This service uses Laravel.
 
@@ -16,7 +16,7 @@ The Anime Service is in charge of managing anime content and handling all search
 
 The Recommendation Service handles everything related to recommendations and user reviews/ratings. This service uses Python (FastAPI).
 
-## Frontend Apps 💻📱
+## 💻📱 Frontend Apps
 
 ### Web App 🌐
 
@@ -26,7 +26,7 @@ The web application provides the user interface for desktop and laptop users. Th
 
 The mobile application provides the user interface for smartphone users. This app uses React Native/Expo.
 
-## Running the project 🛠️
+## 🛠️ Running the project 
 
 To run the project, make sure you have Docker installed. Navigate to the root directory and run `docker-compose up`.
 
