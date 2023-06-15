@@ -15,7 +15,6 @@ The mobile directory contains our React Native mobile application. It offers sim
 
 ## Recommendation Engine (Prospective) 🤖
 
-<<<<<<< HEAD
 The recommendation directory is home to our Python-based recommendation engine. It uses TensorFlow to generate Anime recommendations based on user data. This recommendation engine operates independently, with its own API that the Laravel backend can call when needed.
 
 _KEEP IN MIND ALL OF THIS IS PROSPECTIVE, AS THE PROJECT IS EVER CHANGING AND NOTHING IS CONCRETE!_
