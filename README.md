@@ -1,35 +1,22 @@
-# AnimeSense 🚀
+# Anisense 🌸🍙
 
-AnimeSense is a comprehensive platform that provides anime recommendations, user interaction, content management, and search capabilities, built with Laravel, Python, React, and React Native/Expo.
+Anisense is a comprehensive social media application for Anime enthusiasts. The platform not only offers tailored Anime recommendations using a Python and TensorFlow-based recommendation engine, but also provides users with a platform to track, rate, and share their Anime experiences. With Anisense, you can add your watched and currently watching Anime to your profile and even rank your watched Anime with a special emphasis on your "Top 5" 🏆📺.
 
-## Services 📦
+The application includes a web frontend built with React, a mobile app built with React Native, a server API built with Laravel, and the aforementioned recommendation engine with python.
 
-### User Service 👥
+## API-Layer 🌐
 
-The User Service is responsible for user management, authentication, social interaction, user anime lists, and notifications. This service uses Laravel.
+The api-layer directory houses our Laravel backend. This serves as a RESTful API service that handles all the data management and business logic of the application. It interacts with the other components of the application, providing data to the frontend and mobile app, and interfacing with the recommendation engine to generate Anime recommendations.
 
-### Anime Service 📺
+## Webapp 💻
 
-The Anime Service is in charge of managing anime content and handling all search functionalities. This service uses Laravel.
+The webapp directory contains our React-based web frontend. This is where users can interact with their Anime list, view recommendations, and connect with other users. This directory contains all of our React components, styles, and API service functions.
+mobile 📱
 
-### Recommendation Service ⭐️
+The mobile directory contains our React Native mobile application. It offers similar functionality as the web frontend but is designed for mobile devices.
 
-The Recommendation Service handles everything related to recommendations and user reviews/ratings. This service uses Python (FastAPI).
+## Recommendation Engine (Prospective) 🤖
 
-## Frontend Apps 💻📱
+The recommendation directory is home to our Python-based recommendation engine. It uses TensorFlow to generate Anime recommendations based on user data. This recommendation engine operates independently, with its own API that the Laravel backend can call when needed.
 
-### Web App 🌐
-
-The web application provides the user interface for desktop and laptop users. This app uses React.
-
-### Mobile App 📱
-
-The mobile application provides the user interface for smartphone users. This app uses React Native/Expo.
-
-## Running the project 🛠️
-
-To run the project, make sure you have Docker installed. Navigate to the root directory and run `docker-compose up`.
-
----
-
-_This is a prospective structure and technologies for the application. Changes and adjustments might occur as the project progresses._
+_KEEP IN MIND ALL OF THIS IS PROSPECTIVE, AS THE PROJECT IS EVER CHANGING AND NOTHING IS CONCRETE!_
