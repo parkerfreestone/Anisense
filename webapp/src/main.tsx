@@ -5,19 +5,9 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { RootRoute } from "./routes/RootRoute";
 import { ErrorRoute } from "./routes/wildcard/ErrorRoute";
 import { DiscoverRoute } from "./routes/DiscoverRoute";
-import axios from "axios";
-
-axios.interceptors.request.use(
-  async (config) => {
-    if (config.method === "post") {
-      await axios.get("/api/sanctum/csrf-cookie");
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+import { LoginRoute } from "./routes/auth/LoginRoute";
+import { Register } from "./routes/auth/RegisterRoute";
+import { AuthProvider } from "./context/AuthenticationContext";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +22,19 @@ const router = createBrowserRouter([
       {
         path: "/profile",
         element: <h1>Profile Page</h1>,
+      },
+      {
+        path: "/auth",
+        children: [
+          {
+            path: "login",
+            element: <LoginRoute />,
+          },
+          {
+            path: "Register",
+            element: <Register />,
+          },
+        ],
       },
     ],
   },
