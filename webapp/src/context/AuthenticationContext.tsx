@@ -7,6 +7,7 @@ import {
 } from "react";
 import axiosUtil from "../utils/axiosUtil";
 import { useNavigate } from "react-router-dom";
+import { AxiosResponse } from "axios";
 
 interface AuthContextProps {
   user: SessionUser | null;
@@ -16,6 +17,7 @@ interface AuthContextProps {
   register: ({ ...data }) => void;
   logout: () => void;
   isAuthenticated: boolean;
+  csrf: () => Promise<AxiosResponse<any, any>>;
 }
 
 interface SessionUser {
@@ -51,6 +53,9 @@ const AuthContext = createContext<AuthContextProps>({
     return Promise.resolve();
   },
   isAuthenticated: false,
+  csrf: async () => {
+    return Promise.resolve({ data: "" } as AxiosResponse<any, any>);
+  },
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -142,6 +147,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         register,
         logout,
         isAuthenticated,
+        csrf,
       }}
     >
       {children}

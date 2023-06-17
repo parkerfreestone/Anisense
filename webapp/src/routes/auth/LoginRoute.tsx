@@ -78,9 +78,13 @@ export const LoginRoute = () => {
           </div>
         </div>
       </form>
-      <div className="mx-auto max-w-xl mt-3 text-center">
+      <div className="mx-auto mt-3 max-w-xl flex gap-4 justify-center">
         <Link to="/auth/register" className="text-zinc-500">
           Create an Account
+        </Link>
+        <p className="font-bold text-slate-300">or</p>
+        <Link to="/auth/forgot-password" className="text-zinc-500">
+          Reset Your Password
         </Link>
       </div>
     </div>

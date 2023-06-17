@@ -7,7 +7,9 @@ import { ErrorRoute } from "./routes/wildcard/ErrorRoute";
 import { DiscoverRoute } from "./routes/DiscoverRoute";
 import { LoginRoute } from "./routes/auth/LoginRoute";
 import { Register } from "./routes/auth/RegisterRoute";
-import { AuthProvider } from "./context/AuthenticationContext";
+import { ForgotPasswordRoute } from "./routes/auth/ForgotPasswordRoute";
+import { ResetPasswordRoute } from "./routes/auth/ResetPasswordRoute";
+import { HomeRoute } from "./routes/HomeRoute";
 
 const router = createBrowserRouter([
   {
@@ -15,6 +17,11 @@ const router = createBrowserRouter([
     element: <RootRoute />,
     errorElement: <ErrorRoute />,
     children: [
+      {
+        index: true,
+        path: "/",
+        element: <HomeRoute />,
+      },
       {
         path: "/discover",
         element: <DiscoverRoute />,
@@ -31,8 +38,16 @@ const router = createBrowserRouter([
             element: <LoginRoute />,
           },
           {
-            path: "Register",
+            path: "register",
             element: <Register />,
+          },
+          {
+            path: "forgot-password",
+            element: <ForgotPasswordRoute />,
+          },
+          {
+            path: "password-reset/:token",
+            element: <ResetPasswordRoute />,
           },
         ],
       },
