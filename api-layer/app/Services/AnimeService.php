@@ -34,17 +34,36 @@ class AnimeService {
      * @param int $page
      * @return array
      */
-    public function getTopAnime(int $page): array {
-        $topAnimeKey = "topAnime.{$page}";
+    public function getTopAnime(int $page, string $type, int $limit): array {
+        $topAnimeKey = "topAnime.{$page}.{$type}.{$limit}";
 
-        return Cache::remember($topAnimeKey, 60 * 24, function () use ($page) {
-            $response = Http::get(self::JIKAN_API_BASE_URL . "/top/anime/?page={$page}");
+        return Cache::remember($topAnimeKey, 60 * 24, function () use ($page, $type, $limit) {
+            $response = Http::get(self::JIKAN_API_BASE_URL . "/top/anime/?page={$page}&type={$type}&limit=${limit}");
 
             if ($response->successful()) {
                 return $response->json();
             }
 
             throw new \Exception('Failed to fetch top anime data from Jikan API.');
+        });
+    }
+
+    /**
+     * Get all anime genres
+     * 
+     * @return array
+     */
+    public function getAnimeGenres(string $filter = "genres"): array {
+        $animeGenreKey = "anime.genres";
+
+        return Cache::remember($animeGenreKey, 60 * 24, function () use ($filter) {
+            $response = Http::get(self::JIKAN_API_BASE_URL . "/genres/anime?filter={$filter}");
+        
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            throw new \Exception('Failed to fetch anime genre data from Jikan API.');
         });
     }
 }

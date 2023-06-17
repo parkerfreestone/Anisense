@@ -41,13 +41,13 @@ export const AnimeTitle = ({
   aired,
 }: AnimeTitleProps) => {
   return (
-    <div className="inline-block">
+    <div className="inline-block flex-1">
       <img
-        className="max-h-64 rounded-lg shadow-lg shadow-zinc-800"
-        src={images && images.jpg.large_image_url}
+        className="w-full h-80 rounded-lg shadow-lg shadow-zinc-800 object-cover"
+        src={images && images.jpg.image_url}
         alt={`${title} poster image.`}
       />
-      <p className="text-zinc-300">{title}</p>
+      <p className="text-zinc-400 font-bold mt-4">{title}</p>
 
       {/* MORE CRINGE PRACTICES I'M SORRY */}
       {/* {genres.map(({ name, url }, i) => (

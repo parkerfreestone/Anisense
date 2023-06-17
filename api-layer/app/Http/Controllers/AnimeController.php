@@ -19,11 +19,15 @@ class AnimeController extends Controller {
         return response()->json($anime);
     }
 
-    public function getTopAnime($page) {
-        $anime = $this->animeService->getTopAnime($page);
-
-        Log::info('Jikan response:', ['response' => $anime]);
+    public function getTopAnime($page, $type, $limit) {
+        $anime = $this->animeService->getTopAnime($page, $type, $limit);
 
         return response()->json($anime);
+    }
+
+    public function getAnimeGenres($filter) {
+        $genres = $this->animeService->getAnimeGenres($filter);
+
+        return response()->json($genres);
     }
 }
