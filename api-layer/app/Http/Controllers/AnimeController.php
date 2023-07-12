@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
 use App\Services\AnimeService;
 
@@ -13,8 +13,9 @@ class AnimeController extends Controller {
         $this->animeService = $animeService;
     }
 
-    public function getAnime($id) {
-        $anime = $this->animeService->getAnime($id);
+    public function getAnimeById($id) {
+        $id = intval($id);
+        $anime = $this->animeService->getAnimeById($id);
 
         return response()->json($anime);
     }
@@ -29,5 +30,28 @@ class AnimeController extends Controller {
         $genres = $this->animeService->getAnimeGenres($filter);
 
         return response()->json($genres);
+    }
+
+    public function getAnimeSearch(Request $request) {
+        $validatedData = $request->validate([
+            'page' => 'required|integer',
+            'limit' => 'required|integer',
+            'type' => 'required|string',
+            'score' => 'nullable|integer',
+            'genres' => 'nullable|array',
+            'q' => 'nullable|string',
+        ]);
+
+        $animeSearchResults = $this->animeService->getAnimeSearch(
+            $validatedData['page'],
+            $validatedData['limit'] ?? 10,
+            $validatedData['type'] ?? 'tv',
+            $validatedData['score'],
+            $validatedData['genres'],
+            $validatedData["q"],
+        );
+        
+
+        return response()->json($animeSearchResults);
     }
 }

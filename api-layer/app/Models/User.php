@@ -42,4 +42,22 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Get the animes that the user is associated with.
+     */
+    public function animes() {
+        return $this->belongsToMany(Anime::class)
+            ->withPivot('status', 'rating')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get the top animes for the user.
+     */
+    public function topAnime() {
+        return $this->belongsToMany(Anime::class, 'top_anime')
+            ->withPivot('ranking')
+            ->withTimestamps();
+    }
 }

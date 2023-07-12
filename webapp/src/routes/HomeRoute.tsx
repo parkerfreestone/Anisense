@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimeTitle } from "../components/AnimeTitle";
-import Select, { ActionMeta, MultiValue } from "react-select";
+import Select from "react-select";
 import useAuthContext from "../context/AuthenticationContext";
 import axiosUtil from "../utils/axiosUtil";
+import _, { initial } from "lodash";
+import { Info, Triangle, XCircle } from "lucide-react";
 
 export type TopAnimeTypes = "tv" | "movie" | "ova" | "special" | "ona";
 
 type FilterState = {
-  search: string;
+  q: string;
   genres: ReadonlyArray<ReactSelectOptionType>;
   season: string;
   year: string;
@@ -15,8 +17,6 @@ type FilterState = {
   status: string;
   type: string;
 };
-
-type FilterValues = string | string[] | number | null;
 
 const ANIME_TYPES: TopAnimeTypes[] = ["tv", "movie", "ova", "special", "ona"];
 
@@ -64,8 +64,9 @@ const reactSelectStyles = {
 };
 
 export const HomeRoute = () => {
+  // q is badly named (sorry jikan)... It's the anime title.
   const [filters, setFilters] = useState<FilterState>({
-    search: "",
+    q: "",
     genres: [],
     season: "",
     year: "",
@@ -73,9 +74,8 @@ export const HomeRoute = () => {
     status: "",
     type: "",
   });
+  const [searchResult, setSearchResult] = useState([]);
 
-  const [page, setPage] = useState(1);
-  const [type, setType] = useState<TopAnimeTypes>("tv");
   const [topAnimeByType, setTopAnimeByType] = useState<
     Record<TopAnimeTypes, any[]>
   >({
@@ -86,9 +86,52 @@ export const HomeRoute = () => {
     ona: [],
   });
   const [animeGenres, setAnimeGenres] = useState<ReactSelectOptionType[]>([]);
-  const [pageError, setPageError] = useState("");
+  const [pageStatus, setPageStatus] = useState({
+    error: "",
+    info: "Hello! Please keep in mind this website is in early beta... That being said please report all bugs to the discord server please!",
+  });
+
+  // THIS FEELS DIRTY, I'LL REFACTOR THIS COMPONENT SOON
+  const [initialLoaded, setInitialLoaded] = useState(false);
 
   const { user } = useAuthContext();
+
+  const debouncedSearchAnime = useRef(
+    _.debounce(
+      async (filters: FilterState) => {
+        try {
+          // Remove null or empty filters
+          const validFilters = Object.entries(filters).reduce(
+            (validFilters, [key, value]) => {
+              if (value !== null && value !== "") {
+                // For 'genres', you want to map it to just the values
+                if (key === "genres") {
+                  value = (value as any).map((option: any) => option.value);
+                }
+                return { ...validFilters, [key]: value };
+              } else {
+                return validFilters;
+              }
+            },
+            {}
+          );
+
+          const res = await axiosUtil.get("/api/v1/anime/search", {
+            params: validFilters,
+          });
+          setSearchResult(res.data.data);
+        } catch (err) {
+          setPageStatus({
+            ...pageStatus,
+            error:
+              "There was a problem searching for anime... Please reload the page and try again.",
+          });
+        }
+      },
+      1000,
+      { leading: false, trailing: true }
+    )
+  ).current;
 
   const handleFiltersChange = (
     filter: keyof Omit<FilterState, "genres">,
@@ -101,8 +144,7 @@ export const HomeRoute = () => {
   };
 
   const handleSelectChange = (
-    selectedOptions: ReadonlyArray<ReactSelectOptionType>,
-    actionMeta: ActionMeta<ReactSelectOptionType>
+    selectedOptions: ReadonlyArray<ReactSelectOptionType>
   ) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
@@ -113,7 +155,7 @@ export const HomeRoute = () => {
   const fetchInitialData = async () => {
     try {
       const animePromises = ANIME_TYPES.map((type) =>
-        axiosUtil.get(`/api/v1/anime/top/1/${type}/5`)
+        axiosUtil.get(`/api/v1/anime/top/1/${type}/6`)
       );
 
       const animeGenresReponse = axiosUtil.get(`/api/v1/genres/anime/genres`);
@@ -145,9 +187,11 @@ export const HomeRoute = () => {
 
       setTopAnimeByType(animeByType);
     } catch (err: any) {
-      setPageError(
-        "There was a problem fetching anime... Please check the websites status in the discord or try again later."
-      );
+      setPageStatus({
+        ...pageStatus,
+        error:
+          "There was a problem fetching anime... Please check the websites status in the discord or try again later.",
+      });
     }
   };
 
@@ -155,13 +199,43 @@ export const HomeRoute = () => {
     fetchInitialData();
   }, []);
 
+  useEffect(() => {
+    if (initialLoaded) {
+      debouncedSearchAnime(filters);
+    } else {
+      setInitialLoaded(true);
+    }
+  }, [filters]);
+
   return (
     <div className="mt-32 max-w-6xl mx-auto">
+      {pageStatus.info ||
+        (pageStatus.error && (
+          <div
+            className={`flex gap-4 p-4 mb-6 rounded text-white border shadow-lg ${
+              pageStatus.info
+                ? "border-emerald-700 bg-emerald-950/50 shadow-emerald-950"
+                : "border-red-700 bg-red-950/50 shadow-red-950"
+            }`}
+          >
+            {pageStatus.info ? (
+              <>
+                <Info />
+                <span>{pageStatus.info}</span>
+              </>
+            ) : (
+              <>
+                <XCircle />
+                <span>{pageStatus.error}</span>
+              </>
+            )}
+          </div>
+        ))}
       <h1 className="text-3xl font-bold text-zinc-200">
         👋 Welcome to Anisense{user && `, ${user.name.split(" ")[0]}`}!
       </h1>
       <p className="text-xl text-zinc-400 mt-2">
-        Feel free to browse some Anime, or start building your top 5!
+        Feel free to browse Anime, or start building your top 5!
       </p>
       <div className="mt-12">
         <div className="mb-12">
@@ -179,7 +253,7 @@ export const HomeRoute = () => {
                 type="text"
                 id="search"
                 placeholder="Search..."
-                onChange={(e) => handleFiltersChange("search", e.target.value)}
+                onChange={(e) => handleFiltersChange("q", e.target.value)}
               />
             </div>
 
@@ -202,37 +276,39 @@ export const HomeRoute = () => {
             </div>
           </div>
         </div>
-        {ANIME_TYPES.map((type) => (
-          <div className="mt-12" key={type}>
-            <h2 className="text-2xl font-bold text-zinc-200">{`Top ${type}`}</h2>
-            <div className="mt-4 flex space-x-4">
-              {topAnimeByType[type] &&
-                topAnimeByType[type].map(
-                  ({
-                    mal_id,
-                    title,
-                    images,
-                    episodes,
-                    popularity,
-                    synopsis,
-                    genres,
-                    aired,
-                  }) => (
-                    <AnimeTitle
-                      key={mal_id}
-                      title={title}
-                      aired={aired}
-                      episodes={episodes}
-                      genres={genres}
-                      images={images}
-                      popularity={popularity}
-                      synopsis={synopsis}
-                    />
-                  )
-                )}
-            </div>
-          </div>
-        ))}
+        {searchResult.length > 0
+          ? searchResult.map((result) => <p>{result}</p>)
+          : ANIME_TYPES.map((type) => (
+              <div className="mt-12" key={type}>
+                <h2 className="text-2xl font-bold text-zinc-200">{`Top ${type}`}</h2>
+                <div className="mt-4 flex space-x-4">
+                  {topAnimeByType[type] &&
+                    topAnimeByType[type].map(
+                      ({
+                        mal_id,
+                        title,
+                        images,
+                        episodes,
+                        popularity,
+                        synopsis,
+                        genres,
+                        aired,
+                      }) => (
+                        <AnimeTitle
+                          key={mal_id}
+                          title={title}
+                          aired={aired}
+                          episodes={episodes}
+                          genres={genres}
+                          images={images}
+                          popularity={popularity}
+                          synopsis={synopsis}
+                        />
+                      )
+                    )}
+                </div>
+              </div>
+            ))}
       </div>
     </div>
   );

@@ -20,7 +20,8 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 Route::prefix('v1')->group(function () {
-    Route::get('anime/{id}', [AnimeController::class, 'getAnime']);
+    Route::get('anime/{id}', [AnimeController::class, 'getAnimeById']);
     Route::get('anime/top/{page}/{type}/{limit}', [AnimeController::class, 'getTopAnime']);
     Route::get('genres/anime/{filter}', [AnimeController::class, 'getAnimeGenres']);
+    Route::get('anime/search', [AnimeController::class, 'getAnimeSearch']);
 });
