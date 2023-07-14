@@ -52,11 +52,11 @@ export const AnimeTitle = ({
       {/* MORE CRINGE PRACTICES I'M SORRY */}
       {/* {genres.map(({ name, url }, i) => (
         <a
-          key={i}
-          className="px-2 py-1 rounded-full bg-emerald-700 text-white"
-          href="url"
+        key={i}
+        className="px-2 py-1 rounded-full bg-emerald-700 text-white"
+        href="url"
         >
-          {name}
+        {name}
         </a>
       ))} */}
     </div>

@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Services;
+
+use App\Jobs\UpdateGenresJob;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+
+use App\Models\Genre;
+
+class GenreService {
+    const JIKAN_API_BASE_URL = 'https://api.jikan.moe/v4';
+
+    public function updateGenreData() {
+        UpdateGenresJob::dispatch();
+
+        return response()->json(['message' => 'Genre data update started.']);
+    }
+
+    public function updateGenresFromJikan() {
+        $response = Http::get(self::JIKAN_API_BASE_URL . "/genres/anime");
+
+        if ($response->successful()) {
+            $genres = $response->json()['data'];
+
+            foreach ($genres as $genreData) {
+                Genre::updateOrCreate(
+                    ['id' => $genreData['mal_id']],
+                    ['name' => $genreData['name']],
+                );
+            }
+
+            Cache::put('genres', $genres, 60 * 24);
+        } else {
+            throw new \Exception('Failed to grab anime from the Jikan API.');
+        }
+    }
+
+}

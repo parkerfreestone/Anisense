@@ -10,11 +10,13 @@ class Anime extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id',
-        'api_id',
-        'user_id',
-        'watch_status',
-        'rating',
+        'mal_id',
+        'title',
+        'synopsis',
+        'image_url',
+        'average_color',
+        'popularity',
+        'year'
     ];
 
     /**
@@ -33,5 +35,12 @@ class Anime extends Model
         return $this->belongsToMany(User::class, 'top_anime')
             ->withPivot('ranking')
             ->withTimestamps();
+    }
+
+    /**
+     * Get the genres given an anime object
+     */
+    public function genres() {
+        return $this->belongsToMany(Genre::class);
     }
 }

@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Jobs\UpdateAnimeJob;
+use App\Models\Anime;
+use App\Models\Genre;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
@@ -10,99 +13,79 @@ use Illuminate\Support\Facades\Log;
 class AnimeService {
     const JIKAN_API_BASE_URL = 'https://api.jikan.moe/v4';
 
-    /**
-     * Get the information of an Anime by ID.
-     *
-     * @param int $animeId
-     * @return array
-     */
-    public function getAnimeById(int $animeId): array {
-        $animeKey = "anime.{$animeId}";
-        
-        return Cache::remember($animeKey, 60 * 24, function () use ($animeId) {
-            $response = Http::get(self::JIKAN_API_BASE_URL . "/anime/{$animeId}");
-
-            if ($response->successful()) {
-                return $response->json();
-            }
-
-            throw new \Exception('Failed to fetch anime data from Jikan API.');
-        });
-    }
-
      /**
-     * Get the top anime.
-     *
-     * @param int $page
-     * @return array
+     * Our Main Anime Fetch Boy
      */
-    public function getTopAnime(int $page, string $type, int $limit): array {
-        $topAnimeKey = "topAnime.{$page}.{$type}.{$limit}";
+    public function getAnimeByPage(int $page = 1, int $limit = 15, string $sortField = 'id', string $sortOrder = 'asc'): array {
+        $animeKey = "anime.page.{$page}.limit.{$limit}.sort.{$sortField}.{$sortOrder}";
 
-        return Cache::remember($topAnimeKey, 60 * 24, function () use ($page, $type, $limit) {
-            $response = Http::get(self::JIKAN_API_BASE_URL . "/top/anime/?page={$page}&type={$type}&limit=${limit}");
+        return Cache::remember($animeKey, 60 * 24, function () use ($page, $limit, $sortField, $sortOrder) {
+            $anime = Anime::with('genres')->orderBy($sortField, $sortOrder)->paginate($limit, ["*"], 'page', $page);
 
-            if ($response->successful()) {
-                return $response->json();
+            if ($anime) {
+                return $anime->toArray();
             }
 
-            throw new \Exception('Failed to fetch top anime data from Jikan API.');
+            throw new \Exception('Failed to fetch anime data from database.');
         });
+    }
+
+    public function updateAnimeData() {
+        UpdateAnimeJob::dispatch();
+
+        return response()->json(['message' => 'Anime data update started.']);
     }
 
     /**
-     * Get all anime genres
-     * 
-     * @param string $filter
-     * @return array
+     * This is for the update anime job
      */
-    public function getAnimeGenres(string $filter = "genres"): array {
-        $animeGenreKey = "anime.genres";
-
-        return Cache::remember($animeGenreKey, 60 * 24, function () use ($filter) {
-            $response = Http::get(self::JIKAN_API_BASE_URL . "/genres/anime?filter={$filter}");
-        
+    public function updateAnimeFromJikan() {
+        $pageNumber = 1;
+    
+        do {
+            $response = Http::get(self::JIKAN_API_BASE_URL . "/top/anime?page={$pageNumber}");
+            
             if ($response->successful()) {
-                return $response->json();
-            }
+                $animePageData = $response->json();
+                $animes = $animePageData['data'];
+            
+                foreach ($animes as $animeData) {
 
-            throw new \Exception('Failed to fetch anime genre data from Jikan API.');
-        });
-    }
+                    $anime = Anime::updateOrCreate(
+                        ['mal_id' => $animeData['mal_id']],
+                        [
+                            'title' => $animeData['title'],
+                            'image_url' => $animeData['images']['webp']['image_url'],
+                            'synopsis' => $animeData['synopsis'],
+                            'popularity' => $animeData['popularity'],
+                            'year' => $animeData['aired']['prop']['from']['year'],
+                        ]
+                    );
+    
+                    if (isset($animeData['genres'])) {
+                        $genreIds = [];
 
-    public function getAnimeSearch(int $page = 1, ?int $limit = 10, ?string $type = null, ?int $score = null, ?array $genres = [], ?string $q = null): array {  
-        $genresString = implode(',', $genres);
-        $animeSearchKey = "animeSearch.{$page}.{$limit}.{$type}.{$score}.{$genresString}.{$q}";  
-        
-        return Cache::remember($animeSearchKey, 60 * 24, function () use ($page, $limit, $type, $score, $genresString, $q) {  
-            $url = self::JIKAN_API_BASE_URL . "/anime?limit={$limit}&page={$page}";
+                        foreach ($animeData['genres'] as $genre) {
+
+                            $dbGenre = Genre::where('name', $genre['name'])->first();
+                           
+                            if ($dbGenre) {
+                                $genreIds[] = $dbGenre->id;
+                            }
+                        }
+                        
+                        $anime->genres()->sync($genreIds);
+                    }
     
-            if ($type !== null) {
-                $url .= "&type={$type}";
+                    Cache::put("anime.{$animeData['mal_id']}", $animeData, 60 * 24);
+                }
+    
+                $pageNumber++;
+    
+                usleep(500000);
+            } else {
+                throw new \Exception('Failed to fetch anime data from Jikan API.');
             }
-    
-            if ($score !== null) {
-                $url .= "&score={$score}";
-            }
-    
-            if (!empty($genres)) {
-                $url .= "&genres={$genresString}";
-            }
-    
-            // Assuming q is a query parameter you can search by
-            if ($q !== null) {
-                $url .= "&q={$q}";
-            }
-    
-            Log::info("Requesting URL: $url");
-    
-            $response = Http::get($url);
-    
-            if ($response->successful()) {
-                return $response->json();
-            }
-    
-            throw new \Exception('Failed to fetch anime search data from Jikan API.');
-        });
+        } while (!empty($animes));
     }
 }

@@ -13,8 +13,12 @@ return new class extends Migration
     {
         Schema::create('animes', function (Blueprint $table) {
             $table->id();
-            $table->string('api_id');
+            $table->string('mal_id')->unique();
+            $table->string('title');
+            $table->text('synopsis')->nullable();
+            $table->string('image_url')->nullable();
             $table->string('average_color')->nullable();
+            $table->unsignedSmallInteger('year')->nullable();
             $table->timestamps();
         });
     }

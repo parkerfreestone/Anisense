@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "react-query": "^3.39.3",
+    "react-window": "^1.8.9"
+  },
+  "devDependencies": {
+    "@types/react-window": "^1.8.5"
+  }
+}

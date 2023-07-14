@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AnimeController;
+use App\Http\Controllers\GenreController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,5 +18,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
+
+Route::get('/trigger-genre-job', [GenreController::class, 'updateGenreData']);
+Route::get('/trigger-anime-job', [AnimeController::class, 'updateAnimeData']);
 
 require __DIR__.'/auth.php';
