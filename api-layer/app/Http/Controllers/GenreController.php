@@ -11,6 +11,12 @@ class GenreController extends Controller {
         $this->genreService = $genreService;
     }
 
+    public function getGenres() {
+        $genres = $this->genreService->getAllGenres();
+        
+        return $genres->json();
+    }
+
     public function updateGenreData() {
         $this->genreService->updateGenreData();
     }

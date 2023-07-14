@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnimeController;
+use App\Http\Controllers\GenreController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,4 +26,6 @@ Route::prefix('v1')->group(function () {
     Route::get('anime/top/{page}/{type}/{limit}', [AnimeController::class, 'getTopAnime']);
     Route::get('genres/anime/{filter}', [AnimeController::class, 'getAnimeGenres']);
     Route::get('anime/search', [AnimeController::class, 'getAnimeSearch']);
+
+    Route::get('genres', [GenreController::class, 'getGenres']);
 });

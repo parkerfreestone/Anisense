@@ -1,18 +1,41 @@
-import { useQuery } from "@tanstack/react-query";
-import Modal from "react-modal";
-import axiosUtil from "../utils/axiosUtil";
-import { useState } from "react";
-import { Compass, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { Hero } from "../components/Hero";
+import { InView } from "react-intersection-observer";
 
-const fetchAnime = async () => {
-  const response = await axiosUtil.get("/api/v1/anime");
-  return response.data.data;
+import Modal from "react-modal";
+import Select from "react-select";
+import axiosUtil from "../utils/axiosUtil";
+
+const fetchAnime = async ({ pageParam = 1 }) => {
+  const response = await axiosUtil.get(`/api/v1/anime?page=${pageParam}`);
+  return response.data;
 };
 
 export const DiscoverRoute = () => {
   const [selectedAnime, setSelectedAnime] = useState<any>(null);
-  const { data: animeList, isLoading } = useQuery(["animeList"], fetchAnime);
+  const [genres, setGenres] = useState<any>(null);
+  const [genreFilter, setGenreFilter] = useState<any>(null);
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery(["animeList"], fetchAnime, {
+      getNextPageParam: (lastPage) => {
+        return lastPage.current_page < lastPage.last_page
+          ? lastPage.current_page + 1
+          : false;
+      },
+    });
+
+  // useEffect(() => {
+  //   async () => {
+  //     const genres = await axiosUtil.get("/api/v1/genres");
+
+  //     if (genres) {
+  //       console.log(genres);
+  //       // setGenres(genres.map(genre => ));
+  //     }
+  //   };
+  // }, []);
 
   return (
     <>
@@ -20,30 +43,35 @@ export const DiscoverRoute = () => {
         title="🧭 Discover"
         desc="Discover New Anime to Add to Build up your Profile!"
       />
+      <div>
+        <Select />
+      </div>
       <div className="mx-auto mt-10 max-w-6xl grid grid-cols-6 gap-4">
-        {isLoading
-          ? Array.from({ length: 15 }).map((_, index) => (
-              <div key={index} className="animate-pulse">
-                <div className="w-full h-64 bg-zinc-600 rounded-lg"></div>
-                <div className="h-4 mt-2 bg-zinc-600 rounded-lg"></div>
-              </div>
-            ))
-          : animeList.map((anime, index) => (
-              <div
-                key={index}
-                className="flex flex-col items-center hover:scale-95 cursor-pointer"
-                onClick={() => setSelectedAnime(anime)}
-              >
-                <img
-                  src={anime.image_url}
-                  alt={anime.title}
-                  className="w-full h-72 object-cover rounded-lg shadow-md"
-                />
-                <p className="mt-2 text-zinc-200 font-bold text-center">
-                  {anime.title}
-                </p>
-              </div>
-            ))}
+        {data?.pages.flatMap((pageData, i) =>
+          pageData.data.map((anime) => (
+            <div
+              key={anime.id}
+              className="flex flex-col items-center hover:scale-95 cursor-pointer"
+              onClick={() => setSelectedAnime(anime)}
+            >
+              <img
+                src={anime.image_url}
+                alt={anime.title}
+                className="w-full h-72 object-cover rounded-lg shadow-md"
+              />
+              <p className="mt-2 text-zinc-200 font-bold text-center">
+                {anime.title}
+              </p>
+            </div>
+          ))
+        )}
+        {hasNextPage && (
+          <InView as="div" onChange={fetchNextPage} className="text-center">
+            {isFetchingNextPage
+              ? "Loading more..."
+              : "Scroll down to load more"}
+          </InView>
+        )}
         <Modal
           isOpen={!!selectedAnime}
           onRequestClose={() => setSelectedAnime(null)}

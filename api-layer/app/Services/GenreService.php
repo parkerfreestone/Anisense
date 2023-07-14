@@ -11,6 +11,16 @@ use App\Models\Genre;
 class GenreService {
     const JIKAN_API_BASE_URL = 'https://api.jikan.moe/v4';
 
+    public function getAllGenres() {
+        $genres = Genre::all();
+
+        if (!$genres) {
+            throw new \Exception('Failed to grab genres from the DB.');
+        }
+
+        return $genres->json();
+    }
+
     public function updateGenreData() {
         UpdateGenresJob::dispatch();
 

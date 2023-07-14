@@ -93,7 +93,7 @@ export const NavBar = () => {
 
         <ul className="hidden sm:flex">
           {navLinks.map((props) => (
-            <NavLink {...props} />
+            <NavLink key={props.route} {...props} />
           ))}
         </ul>
       </div>
