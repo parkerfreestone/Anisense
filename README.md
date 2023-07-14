@@ -19,16 +19,6 @@ The recommendation directory is home to our Python-based recommendation engine. 
 
 _KEEP IN MIND ALL OF THIS IS PROSPECTIVE, AS THE PROJECT IS EVER CHANGING AND NOTHING IS CONCRETE!_
 
-## 💻📱 Frontend Apps
-
-### Web App 🌐
-
-The web application provides the user interface for desktop and laptop users. This app uses React.
-
-### Mobile App 📱
-
-The mobile application provides the user interface for smartphone users. This app uses React Native/Expo.
-
 ## 🛠️ Running the project
 
 _COMING SOON..._
