@@ -12,6 +12,7 @@ import { ResetPasswordRoute } from "./routes/auth/ResetPasswordRoute";
 import { HomeRoute } from "./routes/HomeRoute";
 
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { AuthProvider } from "./context/AuthenticationContext";
 
 const queryClient = new QueryClient();
 
@@ -61,8 +62,10 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </AuthProvider>
   </React.StrictMode>
 );

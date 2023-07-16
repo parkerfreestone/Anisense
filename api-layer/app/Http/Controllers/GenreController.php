@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Genre;
 use App\Services\GenreService;
 
 class GenreController extends Controller {
@@ -12,9 +13,9 @@ class GenreController extends Controller {
     }
 
     public function getGenres() {
-        $genres = $this->genreService->getAllGenres();
+        $genres = Genre::all();
         
-        return $genres->json();
+        return response()->json($genres);
     }
 
     public function updateGenreData() {

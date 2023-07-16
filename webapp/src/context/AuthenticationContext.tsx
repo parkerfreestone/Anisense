@@ -6,15 +6,14 @@ import {
   useState,
 } from "react";
 import axiosUtil from "../utils/axiosUtil";
-import { useNavigate } from "react-router-dom";
 import { AxiosResponse } from "axios";
 
 interface AuthContextProps {
   user: SessionUser | null;
   errors: LoginErrors | null;
   getUser: () => Promise<void>;
-  login: ({ ...data }) => void;
-  register: ({ ...data }) => void;
+  login: ({ ...data }) => Promise<void>;
+  register: ({ ...data }) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
   csrf: () => Promise<AxiosResponse<any, any>>;
@@ -25,6 +24,7 @@ interface SessionUser {
   name: String;
   email: String;
   email_verified_at: Date | null;
+  top_anime: any;
   created_at: Date | null;
   updated_at: Date | null;
 }
@@ -71,8 +71,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     password_confirmation: [],
   });
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     const storedAuthState = localStorage.getItem("isAuthenticated");
     if (storedAuthState) {
@@ -88,6 +86,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const getUser = async () => {
     const { data } = await axiosUtil.get("/api/user");
+    console.log(data);
     setUser(data);
   };
 
@@ -102,11 +101,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       setIsAuthenticated(true);
 
-      navigate("/");
+      return Promise.resolve();
     } catch (err: any) {
       if (err.response.status === 422) {
         setErrors(err.response.data.errors);
       }
+
+      return Promise.reject();
     }
   };
 
@@ -121,11 +122,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       setIsAuthenticated(true);
 
-      navigate("/");
+      return Promise.resolve();
     } catch (err: any) {
       if (err.response.status === 422) {
         setErrors(err.response.data.errors);
       }
+
+      return Promise.reject();
     }
   };
 

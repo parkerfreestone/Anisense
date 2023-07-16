@@ -1,4 +1,5 @@
 import { CircuitBoard, MessageSquare, Trophy, UserPlus2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const HomeRoute = () => {
   return (
@@ -16,19 +17,19 @@ export const HomeRoute = () => {
           share your experiences with the community.
         </p>
         <div className="flex flex-col sm:flex-row gap-2 items-center mt-6">
-          <a
+          <Link
             className="py-2 px-8 flex items-center gap-2 float-right rounded font-bold text-white mt-4 bg-emerald-700 hover:bg-emerald-500"
-            href="#"
+            to="/auth/register"
           >
             <UserPlus2 />
             Create An Account
-          </a>
-          <a
+          </Link>
+          <Link
             className="py-2 px-8 flex items-center gap-2 float-right rounded font-bold text-white mt-4 border border-emerald-700"
-            href="#"
+            to="/discover"
           >
             Discover Anime
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -83,17 +84,19 @@ export const HomeRoute = () => {
         <div className="flex flex-col sm:flex-row gap-2 items-center mt-6">
           <a
             className="py-2 px-8 flex items-center gap-2 float-right rounded font-bold text-white mt-4 bg-emerald-700 hover:bg-emerald-500"
-            href="#"
+            href="https://discord.gg/v46nCB2vcA"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <MessageSquare />
             Join Our Discord
           </a>
-          <a
+          <Link
             className="py-2 px-8 flex items-center gap-2 float-right rounded font-bold text-white mt-4 border border-emerald-700"
-            href="#"
+            to="/auth/register"
           >
             Register
-          </a>
+          </Link>
         </div>
       </div>
     </div>

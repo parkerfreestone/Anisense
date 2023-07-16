@@ -24,13 +24,17 @@ export const Register = () => {
 
   const handleRegister = async (e: FormEvent) => {
     e.preventDefault();
-
-    register({
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-      password_confirmation: formData.passwordConfirmation,
-    });
+    try {
+      await register({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        password_confirmation: formData.passwordConfirmation,
+      });
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

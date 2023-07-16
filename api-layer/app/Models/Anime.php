@@ -11,7 +11,8 @@ class Anime extends Model
 
     protected $fillable = [
         'mal_id',
-        'title',
+        'title_en',
+        'title_jp',
         'synopsis',
         'image_url',
         'average_color',

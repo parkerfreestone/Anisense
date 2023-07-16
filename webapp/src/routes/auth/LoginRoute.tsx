@@ -1,7 +1,7 @@
 import { FormEvent, useState } from "react";
 import useAuthContext from "../../context/AuthenticationContext";
-import { LogIn, User } from "lucide-react";
-import { Link } from "react-router-dom";
+import { LogIn } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 export const LoginRoute = () => {
   const [formData, setFormData] = useState({
@@ -9,12 +9,19 @@ export const LoginRoute = () => {
     password: "",
   });
 
+  const navigate = useNavigate();
+
   const { login, errors } = useAuthContext();
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
 
-    login({ email: formData.email, password: formData.password });
+    try {
+      await login({ email: formData.email, password: formData.password });
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
