@@ -16,7 +16,7 @@ class AnimeService {
      */
     public function getAnimeBy(int $page = 1, int $limit = 25, ?string $title = null, ?array $genres = null, string $sortField = 'popularity', string $sortOrder = 'asc'): array {
         $animeKey = "anime.page.{$page}.limit.{$limit}.title_en." . ($title ?? 'all') . ".genres." . ($genres ? implode(',', $genres) : 'all') . ".sort.{$sortField}.{$sortOrder}";
-    
+
         return Cache::remember($animeKey, 60 * 24, function () use ($page, $limit, $title, $genres, $sortField, $sortOrder) {
 
             $anime = Anime::with('genres')
@@ -28,12 +28,13 @@ class AnimeService {
                 })
                 ->when($genres, function ($query, $genres) {
                     return $query->whereHas('genres', function ($q) use ($genres) {
-                        $q->whereIn('id', $genres);
+                        $q->whereIn('name', $genres);
                     });
+
                 })
                 ->orderBy($sortField, $sortOrder)
                 ->paginate($limit, ["*"], 'page', $page);
-    
+                
             if ($anime) {
                 return $anime->toArray();
             }

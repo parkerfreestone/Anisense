@@ -12,6 +12,8 @@ import useAuthContext from "../context/AuthenticationContext";
 
 import _ from "lodash";
 
+Modal.setAppElement("#root");
+
 export const DiscoverRoute = () => {
   const [selectedAnime, setSelectedAnime] = useState<any>(null);
   const [genres, setGenres] = useState<any>(null);
@@ -34,7 +36,7 @@ export const DiscoverRoute = () => {
     const response = await axiosUtil.get(`/api/v1/anime?page=${pageParam}`, {
       params: {
         title: titleFilter,
-        genre: genreFilter ? genreFilter.map((g: any) => g.value) : undefined,
+        genres: genreFilter ? genreFilter.map((g: any) => g.value) : undefined,
       },
     });
     return response.data;
@@ -108,9 +110,9 @@ export const DiscoverRoute = () => {
           value={titleFilter}
           onChange={(e) => setTitleFilter(e.target.value)}
           placeholder="Search anime title"
-          className="flex-1 p-2 mb-2"
+          className="shadow placeholder-zinc-500 appearance-none bg-zinc-600/50 backdrop-blur-sm rounded-md w-full py-3 px-3 text-zinc-50 leading-tight focus:outline-none focus:shadow-outline"
         />
-        <Select
+        {/* <Select
           isClearable
           isMulti
           id="genreFilter"
@@ -118,7 +120,7 @@ export const DiscoverRoute = () => {
           placeholder={"Filter Genres"}
           onChange={setGenreFilter}
           className="flex-1"
-        />
+        /> */}
       </div>
       <div className="mx-auto mt-10 max-w-6xl grid grid-cols-6 gap-4">
         {data?.pages.flatMap((pageData, i) =>
@@ -169,7 +171,10 @@ export const DiscoverRoute = () => {
                   </h4>
                   <div className="flex flex-wrap gap-2 mb-4 mt-2">
                     {selectedAnime?.genres.map(({ name }: { name: string }) => (
-                      <div className="px-2 rounded-full bg-emerald-600 text-white font-bold">
+                      <div
+                        key={name}
+                        className="px-2 rounded-full bg-emerald-600 text-white font-bold"
+                      >
                         {name}
                       </div>
                     ))}

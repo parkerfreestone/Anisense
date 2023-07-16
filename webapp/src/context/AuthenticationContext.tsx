@@ -86,7 +86,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const getUser = async () => {
     const { data } = await axiosUtil.get("/api/user");
-    console.log(data);
     setUser(data);
   };
 

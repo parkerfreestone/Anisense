@@ -42,6 +42,6 @@ class Anime extends Model
      * Get the genres given an anime object
      */
     public function genres() {
-        return $this->belongsToMany(Genre::class);
+        return $this->belongsToMany(Genre::class, "anime_genre");
     }
 }
