@@ -1,13 +1,15 @@
 import { CircuitBoard, MessageSquare, Trophy, UserPlus2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import Logo from "../assets/anisense-logo.svg";
 
 export const HomeRoute = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="hero-grid h-screen flex flex-col items-center justify-center text-center mb-12">
         <div className="flex sm:gap-6 justify-center text-4xl sm:text-6xl">
+          {/* <img src={Logo} className="h-12" /> */}
           <h1 className=" text-zinc-50 font-bold">
-            <span style={{ textShadow: "0px 0px 10px #ffac33" }}>✨</span>{" "}
+            <span style={{ textShadow: "0px 012px 10px #ffac33" }}>✨</span>{" "}
             Welcome To Anisense!
           </h1>
         </div>

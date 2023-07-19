@@ -46,7 +46,7 @@ class User extends Authenticatable
     /**
      * Get the animes that the user is associated with.
      */
-    public function animes() {
+    public function anime() {
         return $this->belongsToMany(Anime::class)
             ->withPivot('status', 'rating')
             ->withTimestamps();

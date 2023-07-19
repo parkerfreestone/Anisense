@@ -15,6 +15,7 @@ interface AuthContextProps {
   login: ({ ...data }) => Promise<void>;
   register: ({ ...data }) => Promise<void>;
   logout: () => void;
+  verifyEmail: () => void;
   isAuthenticated: boolean;
   csrf: () => Promise<AxiosResponse<any, any>>;
 }
@@ -50,6 +51,9 @@ const AuthContext = createContext<AuthContextProps>({
     return Promise.resolve();
   },
   logout: async () => {
+    return Promise.resolve();
+  },
+  verifyEmail: async () => {
     return Promise.resolve();
   },
   isAuthenticated: false,
@@ -132,11 +136,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = async () => {
-    axiosUtil.post("/logout").then(() => {
+    await axiosUtil.post("/logout").then(() => {
       setUser(null);
     });
 
     setIsAuthenticated(false);
+  };
+
+  const verifyEmail = async () => {
+    await csrf();
+
+    try {
+      const response = await axiosUtil.post("/email/verification-notification");
+
+      console.log(response.status);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -148,6 +164,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         login,
         register,
         logout,
+        verifyEmail,
         isAuthenticated,
         csrf,
       }}

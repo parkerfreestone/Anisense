@@ -18,6 +18,7 @@ export const LoginRoute = () => {
 
     try {
       await login({ email: formData.email, password: formData.password });
+
       navigate("/");
     } catch (err) {
       console.log(err);

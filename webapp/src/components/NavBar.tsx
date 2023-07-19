@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { LogIn, LogOut, User, UserPlus2, Menu, Compass } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuthContext from "../context/AuthenticationContext";
 
 import Logo from "../assets/anisense-logo.svg";
@@ -29,9 +29,18 @@ export const NavBar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, logout } = useAuthContext();
 
-  const handleLogout = (e: any) => {
+  const navigate = useNavigate();
+
+  const handleLogout = async (e: any) => {
     e.preventDefault();
-    logout();
+    try {
+      await logout();
+
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+    }
+
     setMenuOpen(false);
   };
 

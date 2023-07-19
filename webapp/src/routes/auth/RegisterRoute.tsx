@@ -2,7 +2,7 @@ import { FormEvent, useState } from "react";
 import axiosUtil from "../../utils/axiosUtil";
 import { useNavigate } from "react-router-dom";
 import useAuthContext from "../../context/AuthenticationContext";
-import { Eye, EyeOff, UserPlus, UserPlus2 } from "lucide-react";
+import { Eye, EyeOff, UserPlus2 } from "lucide-react";
 
 export const Register = () => {
   const [formData, setFormData] = useState({

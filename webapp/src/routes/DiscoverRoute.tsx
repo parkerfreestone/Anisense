@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Hero } from "../components/Hero";
 import { InView } from "react-intersection-observer";
 import { Link } from "react-router-dom";
-import { Info } from "lucide-react";
+import { ChevronDown, ChevronUp, Info, PlusCircle } from "lucide-react";
 
 import Modal from "react-modal";
 import Select from "react-select";
@@ -19,6 +19,10 @@ export const DiscoverRoute = () => {
   const [genres, setGenres] = useState<any>(null);
   const [genreFilter, setGenreFilter] = useState<any>(null);
   const [titleFilter, setTitleFilter] = useState<string>("");
+
+  const [animeExpanded, setAnimeExpanded] = useState<boolean>(false);
+
+  const [hoveredAnime, setHoveredAnime] = useState<any>(null);
 
   const [debouncedTitleFilter, setDebouncedTitleFilter] = useState<string>("");
   const [debouncedGenreFilter, setDebouncedGenreFilter] = useState<any>(null);
@@ -70,6 +74,16 @@ export const DiscoverRoute = () => {
     );
   };
 
+  // const addToProfile = async (animeId: number) => {
+  //   try {
+  //     const response = await axiosUtil.post(`/api/v1/anime/${animeId}/add-to-profile`, {}, {
+  //       headers: {
+  //         'Authorization':
+  //       }
+  //     })
+  //   }
+  // }
+
   useEffect(() => {
     getAllGenres();
   }, []);
@@ -83,17 +97,17 @@ export const DiscoverRoute = () => {
       {!user && (
         <div className="flex gap-4 mx-auto max-w-6xl mt-32 p-4 rounded text-white border border-emerald-700 bg-emerald-950/50 shadow-lg shadow-emerald-950">
           <Info />
-          <p className="flex">
+          <div>
             Seems like you're not logged in.. In order to get the most out of
-            Anisense you can
+            Anisense you can{" "}
             <Link className="underline" to="/auth/register">
               log in now
-            </Link>
-            or
+            </Link>{" "}
+            or{" "}
             <Link className="underline" to="/auth/register">
               create an account
             </Link>
-          </p>
+          </div>
         </div>
       )}
       <Hero
@@ -127,14 +141,44 @@ export const DiscoverRoute = () => {
           pageData.data.map((anime: any) => (
             <div
               key={anime.mal_id}
-              className="flex flex-col items-center hover:scale-95 cursor-pointer"
-              onClick={() => setSelectedAnime(anime)}
+              className="flex flex-col items-center cursor-pointer relative"
+              onMouseEnter={() => setHoveredAnime(anime)}
+              onMouseLeave={() => setHoveredAnime(null)}
             >
-              <img
-                src={anime.image_url}
-                alt={`${anime.title_en || anime.title_jp} poster image.`}
-                className="w-full h-72 object-cover rounded-lg shadow-md"
-              />
+              <div className="w-full h-72 relative">
+                {" "}
+                {/* Wrap the image and the buttons in a separate div */}
+                <img
+                  src={anime.image_url}
+                  alt={`${anime.title_en || anime.title_jp} poster image.`}
+                  className="w-full h-full object-cover rounded-lg shadow-md"
+                />
+                {hoveredAnime === anime && (
+                  <div className="absolute inset-0 flex flex-col justify-center items-center">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedAnime(anime);
+                      }}
+                      className="flex-1 flex gap-2 items-center justify-center text-white font-bold rounded-t-lg bg-gradient-to-b from-black/80 to-black/40 hover:from-black hover:to-black/40 hover:text-emerald-400 w-full transition-all"
+                    >
+                      <Info /> Info
+                    </button>
+                    {user && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Do nothing for now
+                        }}
+                        className="flex-1 flex gap-2 items-center justify-center text-white font-bold rounded-b-lg bg-gradient-to-t from-black/80 to-black/40 hover:from-black hover:to-black/40 hover:text-emerald-400 w-full transition-all"
+                      >
+                        <PlusCircle />
+                        Add To Profile
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
               <p className="mt-2 text-zinc-200 font-bold text-center">
                 {anime.title_en || anime.title_jp}
               </p>
@@ -179,8 +223,28 @@ export const DiscoverRoute = () => {
                       </div>
                     ))}
                   </div>
-                  <div className="flex-1 max-h-32 overflow-scroll mt-4 text-zinc-300">
+                  <div
+                    className={`${
+                      animeExpanded ? "max-h-auto" : "overflow-scroll max-h-32"
+                    } text-zinc-300`}
+                  >
                     <p>{selectedAnime?.synopsis}</p>
+                  </div>
+                  <div>
+                    <button
+                      onClick={() => setAnimeExpanded(!animeExpanded)}
+                      className="flex gap-2 px-4 py-2 mt-2 rounded-md bg-emerald-600 text-white font-bold hover:bg-emerald-800 transition-all"
+                    >
+                      {animeExpanded ? (
+                        <>
+                          Collapse <ChevronUp />
+                        </>
+                      ) : (
+                        <>
+                          Expand <ChevronDown />
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
               </div>

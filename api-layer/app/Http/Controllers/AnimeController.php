@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Anime;
 use Illuminate\Http\Request;
 
 use App\Services\AnimeService;
@@ -24,6 +25,15 @@ class AnimeController extends Controller {
         $anime = $this->animeService->getAnimeBy($page, $limit, $title, $genres, $sortField, $sortOrder);
 
         return response()->json($anime);
+    }
+
+    public function addToProfile(Request $request, $animeId) {
+        $user = $request->user();
+        $anime = Anime::findOrFail($animeId);
+
+        $user->anime()->attach($anime->id, ['status' => 'watching', 'rating' => 0]);
+
+        return response()->json(['message' => 'Anime added to profile successfully.']);
     }
 
     public function updateAnimeData() {

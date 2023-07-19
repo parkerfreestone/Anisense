@@ -13,6 +13,8 @@ import { HomeRoute } from "./routes/HomeRoute";
 
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { AuthProvider } from "./context/AuthenticationContext";
+import { ProfileRoute } from "./routes/ProfileRoute";
+import { VerifyEmail } from "./routes/auth/VerifyEmail";
 
 const queryClient = new QueryClient();
 
@@ -33,7 +35,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/profile",
-        element: <h1>Profile Page</h1>,
+        element: <ProfileRoute />,
       },
       {
         path: "/auth",
@@ -53,6 +55,10 @@ const router = createBrowserRouter([
           {
             path: "password-reset/:token",
             element: <ResetPasswordRoute />,
+          },
+          {
+            path: "verify-email",
+            element: <VerifyEmail />,
           },
         ],
       },
