@@ -28,10 +28,17 @@ class AnimeController extends Controller {
     }
 
     public function addToProfile(Request $request, $animeId) {
-        $user = $request->user();
+        $user = request()->user();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+
         $anime = Anime::findOrFail($animeId);
 
-        $user->anime()->attach($anime->id, ['status' => 'watching', 'rating' => 0]);
+        $rating = $request->get('rating', 0);
+
+        $user->anime()->attach($anime->id, ['status' => 'watching', 'rating' => $rating || 0]);
 
         return response()->json(['message' => 'Anime added to profile successfully.']);
     }

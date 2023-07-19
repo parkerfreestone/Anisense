@@ -20,6 +20,12 @@ export const DiscoverRoute = () => {
   const [genreFilter, setGenreFilter] = useState<any>(null);
   const [titleFilter, setTitleFilter] = useState<string>("");
 
+  const [infoModalOpen, setInfoModalOpen] = useState<boolean>(false);
+
+  const [rating, setRating] = useState<number | null>(null);
+  const [addToProfileModalOpen, setAddToProfileModalOpen] =
+    useState<boolean>(false);
+
   const [animeExpanded, setAnimeExpanded] = useState<boolean>(false);
 
   const [hoveredAnime, setHoveredAnime] = useState<any>(null);
@@ -74,15 +80,19 @@ export const DiscoverRoute = () => {
     );
   };
 
-  // const addToProfile = async (animeId: number) => {
-  //   try {
-  //     const response = await axiosUtil.post(`/api/v1/anime/${animeId}/add-to-profile`, {}, {
-  //       headers: {
-  //         'Authorization':
-  //       }
-  //     })
-  //   }
-  // }
+  const addToProfile = async (animeId: number) => {
+    try {
+      const response = await axiosUtil.post(
+        `/api/anime/addToProfile/${animeId}`,
+        {
+          rating,
+        }
+      );
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   useEffect(() => {
     getAllGenres();
@@ -158,6 +168,7 @@ export const DiscoverRoute = () => {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
+                        setInfoModalOpen(true);
                         setSelectedAnime(anime);
                       }}
                       className="flex-1 flex gap-2 items-center justify-center text-white font-bold rounded-t-lg bg-gradient-to-b from-black/80 to-black/40 hover:from-black hover:to-black/40 hover:text-emerald-400 w-full transition-all"
@@ -168,7 +179,9 @@ export const DiscoverRoute = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          // Do nothing for now
+                          setSelectedAnime(anime);
+
+                          setAddToProfileModalOpen(true);
                         }}
                         className="flex-1 flex gap-2 items-center justify-center text-white font-bold rounded-b-lg bg-gradient-to-t from-black/80 to-black/40 hover:from-black hover:to-black/40 hover:text-emerald-400 w-full transition-all"
                       >
@@ -193,8 +206,11 @@ export const DiscoverRoute = () => {
           </InView>
         )}
         <Modal
-          isOpen={!!selectedAnime}
-          onRequestClose={() => setSelectedAnime(null)}
+          isOpen={infoModalOpen}
+          onRequestClose={() => {
+            setSelectedAnime(null);
+            setInfoModalOpen(false);
+          }}
           contentLabel="Anime Details"
           className="bg-zinc-900 mx-auto mt-32 max-w-2xl p-8 rounded-lg"
           overlayClassName="fixed inset-0 bg-black/70"
@@ -246,6 +262,68 @@ export const DiscoverRoute = () => {
                       )}
                     </button>
                   </div>
+                </div>
+              </div>
+            </>
+          )}
+        </Modal>
+
+        <Modal
+          isOpen={addToProfileModalOpen}
+          onRequestClose={() => {
+            setSelectedAnime(null);
+            setAddToProfileModalOpen(false);
+            setRating(null);
+          }}
+          contentLabel="Add Anime To Profile"
+          className="bg-zinc-900 mx-auto mt-32 max-w-2xl p-8 rounded-lg"
+          overlayClassName="fixed inset-0 bg-black/70"
+        >
+          {selectedAnime && (
+            <>
+              <div className="flex flex-col justify-between gap-4">
+                <h3 className="text-xl text-zinc-100 font-bold mb-4">
+                  Before Adding "
+                  <span className="text-emerald-500">
+                    {selectedAnime.title_en || selectedAnime.title_jp}
+                  </span>
+                  " to your profile, please give it a rating!
+                </h3>
+                <div className="flex justify-between gap-2">
+                  {[...Array(10).keys()].map((v) => (
+                    <button
+                      className={`flex-1 p-4 text-zinc-100 grid place-items-center rounded-md font-bold hover:bg-zinc-600 ${
+                        rating === v + 1 ? "border border-emerald-600" : ""
+                      }`}
+                      onClick={() => setRating(v + 1)}
+                    >
+                      {v + 1}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => {
+                      addToProfile(selectedAnime?.id);
+                      setSelectedAnime(null);
+                      setAddToProfileModalOpen(false);
+                      setRating(null);
+                    }}
+                    disabled={rating === null}
+                    className={`flex gap-2 px-4 py-2 mt-2 rounded-md bg-emerald-600 text-white font-bold disabled:bg-zinc-800 hover:bg-emerald-800 transition-all`}
+                  >
+                    Add to profile
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedAnime(null);
+                      setAddToProfileModalOpen(false);
+                      setRating(null);
+                    }}
+                    className="flex gap-2 px-4 py-2 mt-2 rounded-md bg-red-500 text-white font-bold hover:bg-red-800 transition-all"
+                  >
+                    I've Changed My Mind
+                  </button>
                 </div>
               </div>
             </>
