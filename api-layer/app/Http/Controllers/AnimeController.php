@@ -43,6 +43,13 @@ class AnimeController extends Controller {
         return response()->json(['message' => 'Anime added to profile successfully.']);
     }
 
+    public function getAnimeForUser(Request $request) {
+        $user = $request->user();
+        $anime = $user->anime;
+
+        return response()->json($anime);
+    }
+
     public function updateAnimeData() {
         $this->animeService->updateAnimeData();
     }

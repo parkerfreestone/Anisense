@@ -83,7 +83,7 @@ export const DiscoverRoute = () => {
   const addToProfile = async (animeId: number) => {
     try {
       const response = await axiosUtil.post(
-        `/api/anime/addToProfile/${animeId}`,
+        `/api/v1/anime/addToProfile/${animeId}`,
         {
           rating,
         }

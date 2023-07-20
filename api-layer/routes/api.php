@@ -21,12 +21,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return $request->user();
     });
 
-    Route::post('anime/addToProfile/{animeId}', [AnimeController::class, 'addToProfile']);
 });
 
 
 Route::prefix('v1')->group(function () {
     Route::get('anime', [AnimeController::class, 'getAnime']);
-
     Route::get('genres', [GenreController::class, 'getGenres']);
+
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::post('anime/addToProfile/{animeId}', [AnimeController::class, 'addToProfile']);
+        Route::get('user/anime', [AnimeController::class, 'getAnimeForUser']);
+    });
+
 });

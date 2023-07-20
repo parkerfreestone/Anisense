@@ -1,8 +1,19 @@
+import { useQuery } from "@tanstack/react-query";
 import useAuthContext from "../context/AuthenticationContext";
 import { RequireAuthenticationLayout } from "../layouts/RequireAuthentication";
+import axiosUtil from "../utils/axiosUtil";
 
 export const ProfileRoute = () => {
   const { user } = useAuthContext();
+
+  const { isLoading, error, data } = useQuery(["userAnime"], async () => {
+    const res = await axiosUtil.get("/api/v1/user/anime");
+    return res.data;
+  });
+
+  if (isLoading) return "Loading...";
+
+  if (error) return `An Error has occurred: ${error}`;
 
   return (
     <RequireAuthenticationLayout>
@@ -20,15 +31,23 @@ export const ProfileRoute = () => {
               : "We're not sure..."}
           </h3>
         </div>
-        <div className="flex-grow flex gap-4">
-          {["stat1", "stat2"].map((stat) => (
-            <div className="bg-zinc-800 p-6 rounded-lg">
-              <h4 className="text-2xl text-zinc-100 font-bold mb-4">
-                {stat.toUpperCase()}
-              </h4>
-              <p className="text-zinc-400 text-lg">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure
-                veniam eius porro est cumque blanditiis deserunt.
+        <div className="mx-auto mt-10 max-w-6xl grid grid-cols-6 gap-4">
+          {data.map((anime: any) => (
+            <div key={anime.mal_id}>
+              <div
+                key={anime.mal_id}
+                className="flex flex-col items-center cursor-pointer relative"
+              >
+                <div className="w-full h-72 relative">
+                  <img
+                    src={anime.image_url}
+                    alt={`${anime.title_en || anime.title_jp} poster image.`}
+                    className="w-full h-full object-cover rounded-lg shadow-md"
+                  />
+                </div>
+              </div>
+              <p className="mt-2 text-zinc-200 font-bold text-center">
+                {anime.title_en || anime.title_jp}
               </p>
             </div>
           ))}

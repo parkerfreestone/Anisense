@@ -64,6 +64,7 @@ const AuthContext = createContext<AuthContextProps>({
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<SessionUser | null>(null);
+  const [sessionExpired, setSessionExpired] = useState<boolean>(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     const storedAuthState = localStorage.getItem("isAuthenticated");
     return storedAuthState ? JSON.parse(storedAuthState) : false;
@@ -75,12 +76,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     password_confirmation: [],
   });
 
+  const clearSession = () => {
+    setUser(null);
+    setIsAuthenticated(false);
+    localStorage.setItem("isAuthenticated", "false");
+  };
+
   useEffect(() => {
+    axiosUtil.interceptors.response.use(
+      (res) => res,
+      (error) => {
+        if (error.response.status === 401) {
+          setSessionExpired(true);
+        }
+
+        return Promise.reject(error);
+      }
+    );
+
     const storedAuthState = localStorage.getItem("isAuthenticated");
     if (storedAuthState) {
       setIsAuthenticated(JSON.parse(storedAuthState));
     }
   }, []);
+
+  useEffect(() => {
+    if (sessionExpired) {
+      clearSession();
+    }
+  }, [sessionExpired]);
 
   useEffect(() => {
     localStorage.setItem("isAuthenticated", JSON.stringify(isAuthenticated));
@@ -137,10 +161,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async () => {
     await axiosUtil.post("/logout").then(() => {
-      setUser(null);
+      clearSession();
     });
-
-    setIsAuthenticated(false);
   };
 
   const verifyEmail = async () => {
