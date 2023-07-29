@@ -6,11 +6,14 @@ import { Link } from "react-router-dom";
 import { ChevronDown, ChevronUp, Info, PlusCircle } from "lucide-react";
 
 import Modal from "react-modal";
-import Select from "react-select";
 import axiosUtil from "../utils/axiosUtil";
 import useAuthContext from "../context/AuthenticationContext";
 
 import _ from "lodash";
+import Slider from "react-slider";
+
+type PageStatus = "error" | "info" | "warning";
+type AnimeWatchStatus = "Watching" | "Watched" | "Will Watch";
 
 Modal.setAppElement("#root");
 
@@ -19,6 +22,13 @@ export const DiscoverRoute = () => {
   const [genres, setGenres] = useState<any>(null);
   const [genreFilter, setGenreFilter] = useState<any>(null);
   const [titleFilter, setTitleFilter] = useState<string>("");
+  const [pageInfo, setPageInfo] = useState<{
+    message: string | null;
+    status: PageStatus | null;
+  }>({ message: null, status: null });
+
+  const [selectedAnimeStatus, setSelectedAnimeStatus] =
+    useState<AnimeWatchStatus>("Watching");
 
   const [infoModalOpen, setInfoModalOpen] = useState<boolean>(false);
 
@@ -82,15 +92,19 @@ export const DiscoverRoute = () => {
 
   const addToProfile = async (animeId: number) => {
     try {
-      const response = await axiosUtil.post(
-        `/api/v1/anime/addToProfile/${animeId}`,
-        {
-          rating,
-        }
-      );
-      console.log(response);
-    } catch (err) {
+      await axiosUtil.post(`/api/v1/anime/addToProfile/${animeId}`, {
+        rating,
+        status: selectedAnimeStatus.toLowerCase().replace(" ", "_"),
+      });
+    } catch (err: any) {
       console.log(err);
+      setPageInfo({ status: err.status, message: err.response.data.message });
+    }
+  };
+
+  const handleSliderChange = (newValue: number) => {
+    if (typeof newValue === "number") {
+      setRating(newValue);
     }
   };
 
@@ -104,6 +118,30 @@ export const DiscoverRoute = () => {
 
   return (
     <>
+      <Modal
+        isOpen={pageInfo.message !== null}
+        onRequestClose={() => setPageInfo({ message: null, status: null })}
+        contentLabel="Error!"
+        className="bg-zinc-900 mx-auto mt-32 max-w-2xl p-8 rounded-lg"
+        overlayClassName="fixed inset-0 bg-black/70"
+      >
+        <>
+          <div className="flex flex-col justify-between gap-4">
+            <h3 className="text-2xl text-zinc-100 font-bold mb-4">
+              😵‍💫 This Is Awkward...
+            </h3>
+            <p className="text-lg text-zinc-100">{pageInfo.message}</p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setPageInfo({ status: null, message: null })}
+                className="flex gap-2 px-4 py-2 mt-2 rounded-md bg-emerald-700 text-white font-bold hover:bg-emerald-900 transition-all"
+              >
+                Well okay...
+              </button>
+            </div>
+          </div>
+        </>
+      </Modal>
       {!user && (
         <div className="flex gap-4 mx-auto max-w-6xl mt-32 p-4 rounded text-white border border-emerald-700 bg-emerald-950/50 shadow-lg shadow-emerald-950">
           <Info />
@@ -136,15 +174,6 @@ export const DiscoverRoute = () => {
           placeholder="Search anime title"
           className="shadow placeholder-zinc-500 appearance-none bg-zinc-600/50 backdrop-blur-sm rounded-md w-full py-3 px-3 text-zinc-50 leading-tight focus:outline-none focus:shadow-outline"
         />
-        {/* <Select
-          isClearable
-          isMulti
-          id="genreFilter"
-          options={genres}
-          placeholder={"Filter Genres"}
-          onChange={setGenreFilter}
-          className="flex-1"
-        /> */}
       </div>
       <div className="mx-auto mt-10 max-w-6xl grid grid-cols-6 gap-4">
         {data?.pages.flatMap((pageData, i) =>
@@ -156,8 +185,6 @@ export const DiscoverRoute = () => {
               onMouseLeave={() => setHoveredAnime(null)}
             >
               <div className="w-full h-72 relative">
-                {" "}
-                {/* Wrap the image and the buttons in a separate div */}
                 <img
                   src={anime.image_url}
                   alt={`${anime.title_en || anime.title_jp} poster image.`}
@@ -283,24 +310,64 @@ export const DiscoverRoute = () => {
             <>
               <div className="flex flex-col justify-between gap-4">
                 <h3 className="text-xl text-zinc-100 font-bold mb-4">
-                  Before Adding "
+                  Before Adding
                   <span className="text-emerald-500">
-                    {selectedAnime.title_en || selectedAnime.title_jp}
+                    {" "}
+                    "{selectedAnime.title_en || selectedAnime.title_jp}"{" "}
                   </span>
-                  " to your profile, please give it a rating!
+                  to your profile, please tell us more!
                 </h3>
                 <div className="flex justify-between gap-2">
-                  {[...Array(10).keys()].map((v) => (
+                  {["Watching", "Watched", "Will Watch"].map((v) => (
                     <button
+                      key={v}
                       className={`flex-1 p-4 text-zinc-100 grid place-items-center rounded-md font-bold hover:bg-zinc-600 ${
-                        rating === v + 1 ? "border border-emerald-600" : ""
+                        selectedAnimeStatus === v
+                          ? "border border-emerald-600"
+                          : ""
                       }`}
-                      onClick={() => setRating(v + 1)}
+                      onClick={() =>
+                        setSelectedAnimeStatus(v as AnimeWatchStatus)
+                      }
                     >
-                      {v + 1}
+                      {v}
                     </button>
                   ))}
                 </div>
+                {selectedAnimeStatus && selectedAnimeStatus === "Watched" && (
+                  <>
+                    <hr className="border-zinc-800 my-3" />
+                    <h3 className="text-xl text-zinc-100 font-bold">
+                      Wonderful, what would you rate it?
+                    </h3>
+                    <div className="flex justify-between gap-2">
+                      <Slider
+                        className="w-full py-6"
+                        thumbClassName="h-8 w-8 cursor-grab bg-emerald-700 rounded-full focus:outline-none grid place-items-center text-zinc-100 font-bold top-1/2 transform -translate-y-1/2"
+                        trackClassName="h-1 flex bg-zinc-600 rounded"
+                        min={0.1}
+                        max={9.9}
+                        step={0.1}
+                        value={rating || 0.1}
+                        onAfterChange={handleSliderChange}
+                        renderThumb={(props, state) => (
+                          <div {...props}>{state.valueNow.toFixed(1)}</div>
+                        )}
+                      />
+                      {/* {[...Array(10).keys()].map((v) => (
+                        <button
+                          key={v}
+                          className={`flex-1 p-4 text-zinc-100 grid place-items-center rounded-md font-bold hover:bg-zinc-600 ${
+                            rating === v + 1 ? "border border-emerald-600" : ""
+                          }`}
+                          onClick={() => setRating(v + 1)}
+                        >
+                          {v + 1}
+                        </button>
+                      ))} */}
+                    </div>
+                  </>
+                )}
                 <div className="flex gap-4">
                   <button
                     onClick={() => {
@@ -309,7 +376,9 @@ export const DiscoverRoute = () => {
                       setAddToProfileModalOpen(false);
                       setRating(null);
                     }}
-                    disabled={rating === null}
+                    disabled={
+                      selectedAnimeStatus === "Watched" && rating === null
+                    }
                     className={`flex gap-2 px-4 py-2 mt-2 rounded-md bg-emerald-600 text-white font-bold disabled:bg-zinc-800 hover:bg-emerald-800 transition-all`}
                   >
                     Add to profile

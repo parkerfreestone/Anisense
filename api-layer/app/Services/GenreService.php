@@ -8,26 +8,28 @@ use Illuminate\Support\Facades\Http;
 
 use App\Models\Genre;
 
-class GenreService {
+class GenreService
+{
     const JIKAN_API_BASE_URL = 'https://api.jikan.moe/v4';
 
-    public function getAllGenres() {
+    public function getAllGenres()
+    {
         $genres = Genre::all();
 
         if (!$genres) {
             throw new \Exception('Failed to grab genres from the DB.');
         }
 
-        return $genres->json();
+        return $genres;
     }
 
-    public function updateGenreData() {
+    public function updateGenreData()
+    {
         UpdateGenresJob::dispatch();
-
-        return response()->json(['message' => 'Genre data update started.']);
     }
 
-    public function updateGenresFromJikan() {
+    public function updateGenresFromJikan()
+    {
         $response = Http::get(self::JIKAN_API_BASE_URL . "/genres/anime");
 
         if ($response->successful()) {

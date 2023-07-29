@@ -1,20 +1,29 @@
-<?php 
+<?php
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AddAnimeToProfileRequest;
+use App\Http\Resources\AnimeCollection;
+use App\Http\Resources\AnimeResource;
 use App\Models\Anime;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 
 use App\Services\AnimeService;
 
-class AnimeController extends Controller {
+class AnimeController extends Controller
+{
     protected $animeService;
+    protected $userService;
 
-    public function __construct(AnimeService $animeService) {
+    public function __construct(AnimeService $animeService, UserService $userService)
+    {
         $this->animeService = $animeService;
+        $this->userService = $userService;
     }
 
-    public function getAnime(Request $request) {
+    public function index(Request $request)
+    {
         $page = $request->get('page', 1);
         $limit = $request->get('limit', 25);
         $sortField = $request->get('sortField', 'id');
@@ -24,34 +33,38 @@ class AnimeController extends Controller {
 
         $anime = $this->animeService->getAnimeBy($page, $limit, $title, $genres, $sortField, $sortOrder);
 
+        // I suppose we can add this in later, it's not worth it rn :(
+        // return new AnimeCollection($anime);
         return response()->json($anime);
     }
 
-    public function addToProfile(Request $request, $animeId) {
-        $user = request()->user();
+    public function show(Anime $anime)
+    {
+        return new AnimeResource($anime);
+    }
 
-        if (!$user) {
-            return response()->json(['message' => 'User not authenticated'], 401);
+    public function update()
+    {
+        $this->animeService->updateAnimeData();
+    }
+
+    public function addToProfile(AddAnimeToProfileRequest $request, Anime $anime)
+    {
+        try {
+            $this->userService->addAnimeToUserProfile($anime, $request->rating, $request->status);
+            
+            return response()->json(['message' => 'Anime added to profile successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 409);
         }
 
-        $anime = Anime::findOrFail($animeId);
-
-        $rating = $request->get('rating', 0);
-
-        $user->anime()->attach($anime->id, ['status' => 'watching', 'rating' => $rating || 0]);
-
-        return response()->json(['message' => 'Anime added to profile successfully.']);
     }
 
-    public function getAnimeForUser(Request $request) {
-        $user = $request->user();
-        $anime = $user->anime;
-
+    public function getAnimeForUser()
+    {
+        $anime = $this->userService->getAnimeForUserProfile();
+        // return AnimeResource::collection($anime);
         return response()->json($anime);
-    }
-
-    public function updateAnimeData() {
-        $this->animeService->updateAnimeData();
     }
 
 }
