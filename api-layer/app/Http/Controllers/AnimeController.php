@@ -67,4 +67,14 @@ class AnimeController extends Controller
         return response()->json($anime);
     }
 
+    public function updateAnimeInProfile(Request $request, Anime $anime) {
+        try {
+            $this->userService->updateAnimeInUserProfile($anime, $request->rating, $request->status);
+            
+            return response()->json(['message' => 'Anime was successfully updated.']); 
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()]);
+        }
+    }
+
 }

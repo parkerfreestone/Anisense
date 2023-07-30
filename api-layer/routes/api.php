@@ -29,6 +29,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers'], function
 
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('anime/addToProfile/{anime}', [AnimeController::class, 'addToProfile']);
+        Route::patch('anime/{anime}/profile', [AnimeController::class, 'updateAnimeInProfile']);
         Route::get('user/anime', [AnimeController::class, 'getAnimeForUser']);
     });
 });

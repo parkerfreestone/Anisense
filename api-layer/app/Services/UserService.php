@@ -12,6 +12,13 @@ use Illuminate\Support\Facades\Log;
 class UserService
 {
 
+    public function getAnimeForUserProfile(): Collection
+    {
+        $user = Auth::user();
+
+        return $user->anime;
+    }
+
     public function addAnimeToUserProfile(Anime $anime, float|null $rating, string $status): User|null
     {
         $user = Auth::user();
@@ -34,10 +41,16 @@ class UserService
         return $user;
     }
 
-    public function getAnimeForUserProfile(): Collection
-    {
+    public function updateAnimeInUserProfile(Anime $anime, float|null $rating, string $status): User|null {
         $user = Auth::user();
 
-        return $user->anime;
+        try {
+            $user->anime()->updateExistingPivot($anime->id, ['status' => $status, 'rating' => $rating]);
+        } catch (QueryException $e) {
+            throw $e;
+        }
+
+        return $user;
     }
+    
 }
