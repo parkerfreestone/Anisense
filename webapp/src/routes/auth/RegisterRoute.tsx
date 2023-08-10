@@ -3,6 +3,9 @@ import axiosUtil from "../../utils/axiosUtil";
 import { useNavigate } from "react-router-dom";
 import useAuthContext from "../../context/AuthenticationContext";
 import { Eye, EyeOff, UserPlus2 } from "lucide-react";
+import { FormGroup } from "../../components/common/FormGroup";
+import { TextInput } from "../../components/common/TextInput";
+import { Button } from "../../components/common/Button";
 
 export const Register = () => {
   const [formData, setFormData] = useState({
@@ -49,62 +52,40 @@ export const Register = () => {
           </h1>
         </div>
         <div className="px-6 pb-6 flex flex-col gap-4">
-          <div>
-            <label
-              className="block text-zinc-200 text-lg font-bold mb-2"
-              htmlFor="name"
-            >
-              Full Name
-            </label>
-            <input
+          <FormGroup
+            label="Full Name"
+            htmlFor="name"
+            error={errors?.name ? errors?.name[0] : undefined}
+          >
+            <TextInput
               type="text"
-              className="shadow placeholder-zinc-500 appearance-none bg-zinc-900/50 backdrop-blur-sm rounded-md w-full py-3 px-3 text-zinc-50 leading-tight focus:outline-none focus:shadow-outline"
-              id="name"
               value={formData.name}
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
+              variant="glassmorphic"
             />
-            {errors?.name && <p className="text-red-200">{errors.name[0]}</p>}
-          </div>
-          <div className="flex-1">
-            <label
-              className="block text-zinc-200 text-lg font-bold mb-2"
-              htmlFor="email"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              className="shadow placeholder-zinc-500 appearance-none bg-zinc-900/50 backdrop-blur-sm rounded-md w-full py-3 px-3 text-zinc-50 leading-tight focus:outline-none focus:shadow-outline"
-              id="email"
+          </FormGroup>
+          <FormGroup
+            label="Email"
+            htmlFor="email"
+            error={errors?.email ? errors?.email[0] : undefined}
+          >
+            <TextInput
+              type="text"
               value={formData.email}
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
               }
+              variant="glassmorphic"
             />
-            {errors?.email && <p className="text-red-200">{errors.email[0]}</p>}
-          </div>
-          <div>
-            <label
-              className="block text-zinc-200 text-lg font-bold mb-2"
-              htmlFor="password"
-            >
-              Password
-            </label>
-            <div className="flex gap-4">
-              <input
-                type={passwordState.showPass ? "text" : "password"}
-                className="shadow placeholder-zinc-500 appearance-none bg-zinc-900/50 backdrop-blur-sm rounded-md w-full py-3 px-3 text-zinc-50 leading-tight focus:outline-none focus:shadow-outline"
-                id="password"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-              />
-              <button
-                className="bg-emerald-700 text-slate-50 font-bold py-2 px-4 rounded-md"
-                type="button"
+          </FormGroup>
+          <FormGroup
+            label="Password"
+            htmlFor="password"
+            error={errors?.password?.[0]}
+            endComponent={
+              <Button
                 onClick={() =>
                   setPasswordState({
                     ...passwordState,
@@ -113,35 +94,24 @@ export const Register = () => {
                 }
               >
                 {passwordState.showPass ? <EyeOff /> : <Eye />}
-              </button>
-            </div>
-            {errors?.password && (
-              <p className="text-red-200">{errors.password[0]}</p>
-            )}
-          </div>
-          <div>
-            <label
-              className="block text-zinc-200 text-lg font-bold mb-2"
-              htmlFor="password"
-            >
-              Confirm Password
-            </label>
-            <div className="flex gap-4">
-              <input
-                type={passwordState.showConfirmPass ? "text" : "password"}
-                className="shadow placeholder-zinc-500 appearance-none bg-zinc-900/50 backdrop-blur-sm rounded-md w-full py-3 px-3 text-zinc-50 leading-tight focus:outline-none focus:shadow-outline"
-                id="password"
-                value={formData.passwordConfirmation}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    passwordConfirmation: e.target.value,
-                  })
-                }
-              />
-              <button
-                className="bg-emerald-700 text-slate-50 font-bold py-2 px-4 rounded-md"
-                type="button"
+              </Button>
+            }
+          >
+            <TextInput
+              type={passwordState.showPass ? "text" : "password"}
+              value={formData.password}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              variant="glassmorphic"
+            />
+          </FormGroup>
+          <FormGroup
+            label="Confirm Password"
+            htmlFor="passwordConfirmation"
+            error={errors?.password_confirmation?.[0]}
+            endComponent={
+              <Button
                 onClick={() =>
                   setPasswordState({
                     ...passwordState,
@@ -150,12 +120,21 @@ export const Register = () => {
                 }
               >
                 {passwordState.showConfirmPass ? <EyeOff /> : <Eye />}
-              </button>
-            </div>
-            {errors?.password_confirmation && (
-              <p className="text-red-200">{errors.password_confirmation[0]}</p>
-            )}
-          </div>
+              </Button>
+            }
+          >
+            <TextInput
+              type={passwordState.showConfirmPass ? "text" : "password"}
+              value={formData.passwordConfirmation}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  passwordConfirmation: e.target.value,
+                })
+              }
+              variant="glassmorphic"
+            />
+          </FormGroup>
 
           <div>
             <button

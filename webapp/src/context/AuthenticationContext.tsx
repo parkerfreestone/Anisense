@@ -22,8 +22,8 @@ interface AuthContextProps {
 
 interface SessionUser {
   id: number | null;
-  name: String;
-  email: String;
+  name: string;
+  email: string;
   email_verified_at: Date | null;
   top_anime: any;
   created_at: Date | null;
@@ -31,10 +31,10 @@ interface SessionUser {
 }
 
 interface LoginErrors {
-  name?: String[];
-  email?: String[];
-  password?: String[];
-  password_confirmation?: String[];
+  name?: string[];
+  email?: string[];
+  password?: string[];
+  password_confirmation?: string[];
 }
 
 // LORD FORVIE ME...

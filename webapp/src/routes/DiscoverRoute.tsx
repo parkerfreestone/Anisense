@@ -3,7 +3,15 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { Hero } from "../components/Hero";
 import { InView } from "react-intersection-observer";
 import { Link } from "react-router-dom";
-import { ChevronDown, ChevronUp, Info, PlusCircle } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Filter,
+  Info,
+  PlusCircle,
+  Settings,
+  Settings2,
+} from "lucide-react";
 
 import Modal from "react-modal";
 import axiosUtil from "../utils/axiosUtil";
@@ -11,6 +19,7 @@ import useAuthContext from "../context/AuthenticationContext";
 
 import _ from "lodash";
 import Slider from "react-slider";
+import { SkeletonCard } from "../components/SkeletonCard";
 
 type PageStatus = "error" | "info" | "warning";
 type AnimeWatchStatus = "Watching" | "Watched" | "Will Watch";
@@ -22,6 +31,7 @@ export const DiscoverRoute = () => {
   const [genres, setGenres] = useState<any>(null);
   const [genreFilter, setGenreFilter] = useState<any>(null);
   const [titleFilter, setTitleFilter] = useState<string>("");
+  const [imageLoaded, setImageLoaded] = useState<Record<number, boolean>>({});
   const [pageInfo, setPageInfo] = useState<{
     message: string | null;
     status: PageStatus | null;
@@ -50,7 +60,7 @@ export const DiscoverRoute = () => {
     }, 500)
   );
 
-  const { user } = useAuthContext();
+  const { user, isAuthenticated } = useAuthContext();
 
   const fetchAnime = async ({ pageParam = 1 }) => {
     const response = await axiosUtil.get(`/api/v1/anime?page=${pageParam}`, {
@@ -62,7 +72,7 @@ export const DiscoverRoute = () => {
     return response.data;
   };
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     useInfiniteQuery(
       ["animeList", debouncedTitleFilter, debouncedGenreFilter],
       fetchAnime,
@@ -148,7 +158,7 @@ export const DiscoverRoute = () => {
           <div>
             Seems like you're not logged in.. In order to get the most out of
             Anisense you can{" "}
-            <Link className="underline" to="/auth/register">
+            <Link className="underline" to="/auth/login">
               log in now
             </Link>{" "}
             or{" "}
@@ -160,11 +170,10 @@ export const DiscoverRoute = () => {
       )}
       <Hero
         title={
-          !user
-            ? "🧭 Discover"
-            : `🧭 Welcome back, ${user?.name.split(" ")[0]}!`
+          !user ? "Discover" : `Welcome back, ${user?.name.split(" ")[0]}!`
         }
         desc="Discover new anime to starting building your profile!"
+        includeTopMargin={isAuthenticated}
       />
       <div className="flex gap-4 justify-between mx-auto max-w-6xl mt-6">
         <input
@@ -175,56 +184,85 @@ export const DiscoverRoute = () => {
           className="shadow placeholder-zinc-500 appearance-none bg-zinc-600/50 backdrop-blur-sm rounded-md w-full py-3 px-3 text-zinc-50 leading-tight focus:outline-none focus:shadow-outline"
         />
       </div>
+      <div className="flex justify-start gap-4 mx-auto max-w-6xl mt-6">
+        {["Anime", "Users", "Manga"].map((x) => (
+          <button
+            disabled={x === "Manga"}
+            className={`py-1 px-4 text-zinc-100 bg-zinc-600/50 backdrop-blur-sm rounded-full ${
+              x === "Manga" && "text-zinc-500"
+            }`}
+          >
+            {x}
+          </button>
+        ))}
+      </div>
       <div className="mx-auto mt-10 max-w-6xl grid grid-cols-6 gap-4">
-        {data?.pages.flatMap((pageData, i) =>
-          pageData.data.map((anime: any) => (
-            <div
-              key={anime.mal_id}
-              className="flex flex-col items-center cursor-pointer relative"
-              onMouseEnter={() => setHoveredAnime(anime)}
-              onMouseLeave={() => setHoveredAnime(null)}
-            >
-              <div className="w-full h-72 relative">
-                <img
-                  src={anime.image_url}
-                  alt={`${anime.title_en || anime.title_jp} poster image.`}
-                  className="w-full h-full object-cover rounded-lg shadow-md"
-                />
-                {hoveredAnime === anime && (
-                  <div className="absolute inset-0 flex flex-col justify-center items-center">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setInfoModalOpen(true);
-                        setSelectedAnime(anime);
+        {status === "loading"
+          ? Array(6).fill(<SkeletonCard />)
+          : data?.pages.flatMap((pageData, i) =>
+              pageData.data.map((anime: any) => (
+                <div
+                  key={anime.mal_id}
+                  className="flex flex-col items-center cursor-pointer relative"
+                  onMouseEnter={() => setHoveredAnime(anime)}
+                  onMouseLeave={() => setHoveredAnime(null)}
+                >
+                  <div className="w-full h-72 relative">
+                    <img
+                      src={anime.image_url}
+                      onLoad={() =>
+                        setImageLoaded((prev) => ({
+                          ...prev,
+                          [anime.mal_id]: true,
+                        }))
+                      }
+                      alt={`${anime.title_en || anime.title_jp} poster image.`}
+                      className="w-full h-full object-cover rounded-lg shadow-md"
+                      style={{
+                        display: imageLoaded[anime.mal_id] ? "block" : "none",
                       }}
-                      className="flex-1 flex gap-2 items-center justify-center text-white font-bold rounded-t-lg bg-gradient-to-b from-black/80 to-black/40 hover:from-black hover:to-black/40 hover:text-emerald-400 w-full transition-all"
-                    >
-                      <Info /> Info
-                    </button>
-                    {user && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedAnime(anime);
+                    />
+                    <div
+                      style={{
+                        display: imageLoaded[anime.mal_id] ? "none" : "block",
+                      }}
+                      className="h-72 bg-zinc-700 rounded-lg mb-4"
+                    />
+                    {hoveredAnime === anime && (
+                      <div className="absolute inset-0 flex flex-col justify-center items-center">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setInfoModalOpen(true);
+                            setSelectedAnime(anime);
+                          }}
+                          className="flex-1 flex gap-2 items-center justify-center text-white font-bold rounded-t-lg bg-gradient-to-b from-black/80 to-black/40 hover:from-black hover:to-black/40 hover:text-emerald-400 w-full transition-all"
+                        >
+                          <Info /> Info
+                        </button>
+                        {user && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedAnime(anime);
 
-                          setAddToProfileModalOpen(true);
-                        }}
-                        className="flex-1 flex gap-2 items-center justify-center text-white font-bold rounded-b-lg bg-gradient-to-t from-black/80 to-black/40 hover:from-black hover:to-black/40 hover:text-emerald-400 w-full transition-all"
-                      >
-                        <PlusCircle />
-                        Add To Profile
-                      </button>
+                              setAddToProfileModalOpen(true);
+                            }}
+                            className="flex-1 flex gap-2 items-center justify-center text-white font-bold rounded-b-lg bg-gradient-to-t from-black/80 to-black/40 hover:from-black hover:to-black/40 hover:text-emerald-400 w-full transition-all"
+                          >
+                            <PlusCircle />
+                            Add To Profile
+                          </button>
+                        )}
+                      </div>
                     )}
                   </div>
-                )}
-              </div>
-              <p className="mt-2 text-zinc-200 font-bold text-center">
-                {anime.title_en || anime.title_jp}
-              </p>
-            </div>
-          ))
-        )}
+                  <p className="mt-2 text-zinc-200 font-bold text-center">
+                    {anime.title_en || anime.title_jp}
+                  </p>
+                </div>
+              ))
+            )}
         {hasNextPage && (
           <InView as="div" onChange={fetchNextPage} className="text-center">
             {isFetchingNextPage
@@ -354,17 +392,6 @@ export const DiscoverRoute = () => {
                           <div {...props}>{state.valueNow.toFixed(1)}</div>
                         )}
                       />
-                      {/* {[...Array(10).keys()].map((v) => (
-                        <button
-                          key={v}
-                          className={`flex-1 p-4 text-zinc-100 grid place-items-center rounded-md font-bold hover:bg-zinc-600 ${
-                            rating === v + 1 ? "border border-emerald-600" : ""
-                          }`}
-                          onClick={() => setRating(v + 1)}
-                        >
-                          {v + 1}
-                        </button>
-                      ))} */}
                     </div>
                   </>
                 )}

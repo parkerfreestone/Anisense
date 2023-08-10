@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ReactElement, useState } from "react";
 import { LogIn, LogOut, User, UserPlus2, Menu, Compass } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthContext from "../context/AuthenticationContext";
@@ -8,7 +8,7 @@ import Logo from "../assets/anisense-logo.svg";
 interface NavLinkProps {
   route: string;
   text: string;
-  icon: React.ReactElement;
+  icon: ReactElement;
   onClick?: any;
 }
 

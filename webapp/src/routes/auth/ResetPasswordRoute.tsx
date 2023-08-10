@@ -9,7 +9,7 @@ export const ResetPasswordRoute = () => {
     password: "",
     passwordConfirmation: "",
   });
-  const [email, setEmail] = useState<String | null>("");
+  const [email, setEmail] = useState<string | null>("");
   const [errors, setErrors] = useState({
     password: [],
     passwordConfirmation: [],
