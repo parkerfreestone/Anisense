@@ -25,7 +25,7 @@ class AnimeController extends Controller
     public function index(Request $request)
     {
         $page = $request->get('page', 1);
-        $limit = $request->get('limit', 25);
+        $limit = $request->get('limit', 100);
         $sortField = $request->get('sortField', 'id');
         $sortOrder = $request->get('sortOrder', 'asc');
         $title = $request->get('title', '');

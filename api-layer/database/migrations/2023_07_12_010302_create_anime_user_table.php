@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->enum('status', ['watched', 'watching', 'will_watch'])->default('will_watch');
             $table->decimal('rating', 3, 1)->nullable();
+            $table->unsignedInteger('rank')->nullable();
             $table->primary(['user_id', 'anime_id']);
             $table->timestamps();
         });

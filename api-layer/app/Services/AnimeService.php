@@ -14,7 +14,7 @@ class AnimeService {
      /**
      * Our Main Anime Fetch Boy
      */
-    public function getAnimeBy(int $page = 1, int $limit = 25, ?string $title = null, ?array $genres = null, string $sortField = 'popularity', string $sortOrder = 'asc') {
+    public function getAnimeBy(int $page = 1, int $limit = 100, ?string $title = null, ?array $genres = null, string $sortField = 'popularity', string $sortOrder = 'asc') {
         $animeKey = "anime.page.{$page}.limit.{$limit}.title_en." . ($title ?? 'all') . ".genres." . ($genres ? implode(',', $genres) : 'all') . ".sort.{$sortField}.{$sortOrder}";
 
         return Cache::remember($animeKey, 60 * 24, function () use ($page, $limit, $title, $genres, $sortField, $sortOrder) {
