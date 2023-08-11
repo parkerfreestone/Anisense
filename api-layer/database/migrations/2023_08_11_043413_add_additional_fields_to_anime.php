@@ -12,10 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('animes', function (Blueprint $table) {
-            $table->dropColumn('title');
-            $table->string('title_en')->nullable();
-            $table->string('title_jp')->nullable();
-            $table->string('title_default')->nullable();
+            $table->unsignedInteger('episodes')->nullable()->after('popularity');
+            $table->string('duration')->nullable()->after('episodes');
+            $table->string('trailer_url')->nullable()->after('duration');
         });
     }
 
@@ -25,9 +24,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('animes', function (Blueprint $table) {
-            $table->dropColumn('title_en');
-            $table->dropColumn('title_jp');
-            $table->string('title_default');
+            $table->dropColumn('episodes');
+            $table->dropColumn('duration');
+            $table->dropColumn('trailer_url');
         });
     }
 };

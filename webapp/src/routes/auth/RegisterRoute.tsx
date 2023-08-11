@@ -11,6 +11,7 @@ export const Register = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    username: "",
     password: "",
     passwordConfirmation: "",
   });
@@ -31,6 +32,7 @@ export const Register = () => {
       await register({
         name: formData.name,
         email: formData.email,
+        username: formData.username,
         password: formData.password,
         password_confirmation: formData.passwordConfirmation,
       });
@@ -67,12 +69,26 @@ export const Register = () => {
             />
           </FormGroup>
           <FormGroup
+            label="Username"
+            htmlFor="username"
+            error={errors?.username ? errors?.username[0] : undefined}
+          >
+            <TextInput
+              type="text"
+              value={formData.username}
+              onChange={(e) =>
+                setFormData({ ...formData, username: e.target.value })
+              }
+              variant="glassmorphic"
+            />
+          </FormGroup>
+          <FormGroup
             label="Email"
             htmlFor="email"
             error={errors?.email ? errors?.email[0] : undefined}
           >
             <TextInput
-              type="text"
+              type="email"
               value={formData.email}
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
@@ -86,6 +102,8 @@ export const Register = () => {
             error={errors?.password?.[0]}
             endComponent={
               <Button
+                size="sm"
+                type="button"
                 onClick={() =>
                   setPasswordState({
                     ...passwordState,
@@ -112,6 +130,8 @@ export const Register = () => {
             error={errors?.password_confirmation?.[0]}
             endComponent={
               <Button
+                size="sm"
+                type="button"
                 onClick={() =>
                   setPasswordState({
                     ...passwordState,

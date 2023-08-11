@@ -32,7 +32,7 @@ class AnimeService {
                     });
 
                 })
-                ->orderBy($sortField, $sortOrder)
+                ->orderBy('popularity', 'asc')
                 ->paginate($limit, ["*"], 'page', $page);
                 
             if ($anime) {
@@ -68,21 +68,25 @@ class AnimeService {
                         ['mal_id' => $animeData['mal_id']],
                             [
                                 'title_en' => $animeData['title_english'],
-                                'title_jp' => $animeData['title'],
+                                'title_jp' => $animeData['title_japanese'],
+                                'title_default' => $animeData['title'],
                                 'image_url' => $animeData['images']['webp']['image_url'],
                                 'synopsis' => $animeData['synopsis'],
                                 'popularity' => $animeData['popularity'],
+                                'episodes' => $animeData['episodes'],
+                                'duration' => $animeData['duration'],
+                                'trailer_url' => $animeData['trailer']['youtube_id'],
                                 'year' => $animeData['aired']['prop']['from']['year'],
                             ]
                     );
     
                     if (isset($animeData['genres'])) {
+                        $genreNames = array_column($animeData['genres'], 'name');
                         $genreIds = [];
-
-                        foreach ($animeData['genres'] as $genre) {
-
-                            $dbGenre = Genre::where('name', $genre['name'])->first();
-                           
+                    
+                        foreach ($genreNames as $genreName) {
+                            $dbGenre = Genre::where('name', $genreName)->first();
+                            
                             if ($dbGenre) {
                                 $genreIds[] = $dbGenre->id;
                             }

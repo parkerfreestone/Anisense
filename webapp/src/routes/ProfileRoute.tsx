@@ -27,7 +27,7 @@ export const ProfileRoute = () => {
             {user?.name[0]}
           </div>
           <h1 className="text-zinc-100 text-3xl font-bold">{user?.name}</h1>
-          <h2 className="text-zinc-400 text-lg">{user?.email}</h2>
+          <h2 className="text-zinc-400 text-lg">@{user?.username}</h2>
           <h3 className="text-zinc-600 text-lg">
             Joined{" "}
             {user?.created_at

@@ -23,6 +23,7 @@ interface AuthContextProps {
 interface SessionUser {
   id: number | null;
   name: string;
+  username: string;
   email: string;
   email_verified_at: Date | null;
   top_anime: any;
@@ -32,7 +33,8 @@ interface SessionUser {
 
 interface LoginErrors {
   name?: string[];
-  email?: string[];
+  login?: string[];
+  username?: string[];
   password?: string[];
   password_confirmation?: string[];
 }
@@ -71,7 +73,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   });
   const [errors, setErrors] = useState<LoginErrors>({
     name: [],
-    email: [],
+    username: [],
+    login: [],
     password: [],
     password_confirmation: [],
   });

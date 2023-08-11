@@ -13,10 +13,14 @@ class Anime extends Model
         'mal_id',
         'title_en',
         'title_jp',
+        'title_default',
         'synopsis',
         'image_url',
         'average_color',
         'popularity',
+        'duration',
+        'episodes',
+        'trailer_url',
         'year'
     ];
 

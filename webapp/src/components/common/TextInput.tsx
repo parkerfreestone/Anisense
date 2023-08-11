@@ -10,7 +10,6 @@ export const TextInput = ({
   onChange,
   type = "text",
   variant = "default",
-  onClick,
 }: TextInputProps) => {
   const baseStyle =
     "shadow appearance-none rounded-md w-full py-3 px-3 leading-tight focus:outline-none focus:shadow-outline";
@@ -25,7 +24,6 @@ export const TextInput = ({
       className={`${baseStyle} ${variantStyle}`}
       value={value}
       onChange={onChange}
-      onClick={onClick}
     />
   );
 };

@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 export const LoginRoute = () => {
   const [formData, setFormData] = useState({
-    email: "",
+    login: "",
     password: "",
   });
 
@@ -17,7 +17,7 @@ export const LoginRoute = () => {
     e.preventDefault();
 
     try {
-      await login({ email: formData.email, password: formData.password });
+      await login({ login: formData.login, password: formData.password });
 
       navigate("/");
     } catch (err) {
@@ -38,21 +38,21 @@ export const LoginRoute = () => {
           <div>
             <label
               className="block text-zinc-200 text-lg font-bold mb-2"
-              htmlFor="email"
+              htmlFor="login"
             >
-              Email
+              Email or Username
             </label>
             <input
               type="text"
-              name="email"
-              id="email"
+              name="text"
+              id="login"
               className="shadow placeholder-zinc-500 appearance-none bg-zinc-900/50 backdrop-blur-sm rounded-md w-full py-3 px-3 text-zinc-50 leading-tight focus:outline-none focus:shadow-outline"
-              value={formData.email}
+              value={formData.login}
               onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
+                setFormData({ ...formData, login: e.target.value })
               }
             />
-            {errors?.email && <p className="text-red-200">{errors.email[0]}</p>}
+            {errors?.login && <p className="text-red-200">{errors.login[0]}</p>}
           </div>
           <div>
             <label

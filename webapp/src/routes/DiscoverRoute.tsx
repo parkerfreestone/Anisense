@@ -187,6 +187,7 @@ export const DiscoverRoute = () => {
       <div className="flex justify-start gap-4 mx-auto max-w-6xl mt-6">
         {["Anime", "Users", "Manga"].map((x) => (
           <button
+            key={x}
             disabled={x === "Manga"}
             className={`py-1 px-4 text-zinc-100 bg-zinc-600/50 backdrop-blur-sm rounded-full ${
               x === "Manga" && "text-zinc-500"
@@ -216,7 +217,9 @@ export const DiscoverRoute = () => {
                           [anime.mal_id]: true,
                         }))
                       }
-                      alt={`${anime.title_en || anime.title_jp} poster image.`}
+                      alt={`${
+                        anime.title_en || anime.title_default
+                      } poster image.`}
                       className="w-full h-full object-cover rounded-lg shadow-md"
                       style={{
                         display: imageLoaded[anime.mal_id] ? "block" : "none",
@@ -258,7 +261,7 @@ export const DiscoverRoute = () => {
                     )}
                   </div>
                   <p className="mt-2 text-zinc-200 font-bold text-center">
-                    {anime.title_en || anime.title_jp}
+                    {anime.title_en || anime.title_default}
                   </p>
                 </div>
               ))
@@ -286,13 +289,13 @@ export const DiscoverRoute = () => {
                 <img
                   src={selectedAnime.image_url}
                   alt={`${
-                    selectedAnime.title_en || selectedAnime.title_jp
+                    selectedAnime.title_en || selectedAnime.title_default
                   } poster image.`}
                   className="h-64 object-cover rounded-lg"
                 />
                 <div className="flex flex-col flex-1">
                   <h4 className="text-zinc-100 font-bold text-3xl">
-                    {selectedAnime.title_en || selectedAnime.title_jp}
+                    {selectedAnime.title_en || selectedAnime.title_default}
                   </h4>
                   <div className="flex flex-wrap gap-2 mb-4 mt-2">
                     {selectedAnime?.genres.map(({ name }: { name: string }) => (
@@ -351,7 +354,8 @@ export const DiscoverRoute = () => {
                   Before Adding
                   <span className="text-emerald-500">
                     {" "}
-                    "{selectedAnime.title_en || selectedAnime.title_jp}"{" "}
+                    "{selectedAnime.title_en ||
+                      selectedAnime.title_default}"{" "}
                   </span>
                   to your profile, please tell us more!
                 </h3>
