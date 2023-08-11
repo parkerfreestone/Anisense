@@ -9,17 +9,14 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
-
     /**
      * Define the application's command schedule.
-     * 
-     * 
      */
     protected function schedule(Schedule $schedule): void
     {
         // Update all the genres
         $schedule->job(new UpdateGenresJob)->dailyAt('12:00');
-        
+
         // Update all the anime
         $schedule->job(new UpdateAnimeJob)->dailyAt('4:20');
     }

@@ -21,13 +21,14 @@ class Anime extends Model
         'duration',
         'episodes',
         'trailer_url',
-        'year'
+        'year',
     ];
 
     /**
      * Get the users associated with a given anime
      */
-    public function users() {
+    public function users()
+    {
         return $this->belongsToMany(User::class)
             ->withPivot('status', 'rating')
             ->withTimestamps();
@@ -36,7 +37,8 @@ class Anime extends Model
     /**
      * Get the top anime users
      */
-    public function topAnimeUsers() {
+    public function topAnimeUsers()
+    {
         return $this->belongsToMany(User::class, 'top_anime')
             ->withPivot('ranking')
             ->withTimestamps();
@@ -45,7 +47,8 @@ class Anime extends Model
     /**
      * Get the genres given an anime object
      */
-    public function genres() {
-        return $this->belongsToMany(Genre::class, "anime_genre");
+    public function genres()
+    {
+        return $this->belongsToMany(Genre::class, 'anime_genre');
     }
 }

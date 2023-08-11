@@ -33,8 +33,9 @@ interface SessionUser {
 
 interface LoginErrors {
   name?: string[];
-  login?: string[];
+  email?: string[];
   username?: string[];
+  login?: string[];
   password?: string[];
   password_confirmation?: string[];
 }

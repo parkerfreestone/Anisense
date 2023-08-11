@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useAuthContext from "../../context/AuthenticationContext";
 import { Verified } from "lucide-react";
 

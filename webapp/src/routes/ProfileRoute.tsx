@@ -24,10 +24,12 @@ export const ProfileRoute = () => {
       <div className="mt-32 mx-auto max-w-6xl gap-8">
         <div className="bg-black/50 shadow-lg backdrop-blur-sm rounded-lg p-6 border border-white/10 mb-12 text-center">
           <div className="h-32 w-32 grid place-items-center rounded-full bg-emerald-600/80 backdrop-blur-sm mx-auto border border-emerald-100/30 mb-4 text-5xl text-zinc-100 font-bold">
-            {user?.name[0]}
+            {user?.username[0].toUpperCase()}
           </div>
-          <h1 className="text-zinc-100 text-3xl font-bold">{user?.name}</h1>
-          <h2 className="text-zinc-400 text-lg">@{user?.username}</h2>
+          <h1 className="text-zinc-100 text-3xl font-bold">
+            @{user?.username}
+          </h1>
+          {/* <h2 className="text-zinc-400 text-lg">@{user?.name}</h2> */}
           <h3 className="text-zinc-600 text-lg">
             Joined{" "}
             {user?.created_at
@@ -51,13 +53,15 @@ export const ProfileRoute = () => {
                   <div className="w-full h-72 relative">
                     <img
                       src={anime.image_url}
-                      alt={`${anime.title_en || anime.title_jp} poster image.`}
+                      alt={`${
+                        anime.title_en || anime.title_default
+                      } poster image.`}
                       className="w-full h-full object-cover rounded-lg shadow-md"
                     />
                   </div>
                 </div>
                 <p className="mt-2 text-zinc-200 font-bold text-center">
-                  {anime.title_en || anime.title_jp}
+                  {anime.title_en || anime.title_default}
                 </p>
               </div>
             ))}
@@ -79,13 +83,15 @@ export const ProfileRoute = () => {
                   <div className="w-full h-72 relative">
                     <img
                       src={anime.image_url}
-                      alt={`${anime.title_en || anime.title_jp} poster image.`}
+                      alt={`${
+                        anime.title_en || anime.title_default
+                      } poster image.`}
                       className="w-full h-full object-cover rounded-lg shadow-md"
                     />
                   </div>
                 </div>
                 <p className="mt-2 text-zinc-200 font-bold text-center">
-                  {anime.title_en || anime.title_jp}
+                  {anime.title_en || anime.title_default}
                 </p>
               </div>
             ))}

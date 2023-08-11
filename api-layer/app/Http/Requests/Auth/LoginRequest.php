@@ -3,14 +3,12 @@
 namespace App\Http\Requests\Auth;
 
 use App\Models\User;
-
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class LoginRequest extends FormRequest
 {
@@ -40,7 +38,8 @@ class LoginRequest extends FormRequest
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function authenticate() {
+    public function authenticate()
+    {
         $this->ensureIsNotRateLimited();
 
         $loginType = filter_var($this->input('login'), FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
@@ -49,7 +48,7 @@ class LoginRequest extends FormRequest
             $loginType => $this->input('login'),
         ]);
 
-        if (!Auth::attempt($this->only($loginType, 'password'), $this->boolean('remember'))) {
+        if (! Auth::attempt($this->only($loginType, 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([

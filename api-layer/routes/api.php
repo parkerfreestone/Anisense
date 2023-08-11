@@ -26,10 +26,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers'], function () {
     Route::apiResource('anime', AnimeController::class);
     Route::apiResource('genres', GenreController::class)->only(['index', 'update']);
-    
+
     Route::get('job/update/anime', [AnimeController::class, 'update']);
     Route::get('job/update/genres', [GenreController::class, 'update']);
-    
+
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('anime/addToProfile/{anime}', [AnimeController::class, 'addToProfile']);
         Route::patch('anime/{anime}/profile', [AnimeController::class, 'updateAnimeInProfile']);

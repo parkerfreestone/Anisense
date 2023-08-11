@@ -11,11 +11,11 @@ class Genre extends Model
 
     protected $fillable = [
         'id',
-        'name'
+        'name',
     ];
 
-    public function animes() {
+    public function animes()
+    {
         return $this->belongsToMany(Anime::class, 'anime_genre');
     }
-
 }

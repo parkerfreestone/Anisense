@@ -15,6 +15,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { AuthProvider } from "./context/AuthenticationContext";
 import { ProfileRoute } from "./routes/ProfileRoute";
 import { VerifyEmail } from "./routes/auth/VerifyEmail";
+import { MaintenanceRoute } from "./routes/wildcard/MaintenanceRoute";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
         index: true,
         path: "/",
         element: <HomeRoute />,
+      },
+      {
+        path: "/maintenance",
+        element: <MaintenanceRoute />,
       },
       {
         path: "/discover",

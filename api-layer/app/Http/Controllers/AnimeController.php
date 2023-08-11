@@ -6,14 +6,14 @@ use App\Http\Requests\AddAnimeToProfileRequest;
 use App\Http\Resources\AnimeCollection;
 use App\Http\Resources\AnimeResource;
 use App\Models\Anime;
+use App\Services\AnimeService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
-
-use App\Services\AnimeService;
 
 class AnimeController extends Controller
 {
     protected $animeService;
+
     protected $userService;
 
     public function __construct(AnimeService $animeService, UserService $userService)
@@ -52,7 +52,7 @@ class AnimeController extends Controller
     {
         try {
             $this->userService->addAnimeToUserProfile($anime, $request->rating, $request->status);
-            
+
             return response()->json(['message' => 'Anime added to profile successfully.']);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 409);
@@ -67,14 +67,14 @@ class AnimeController extends Controller
         return response()->json($anime);
     }
 
-    public function updateAnimeInProfile(Request $request, Anime $anime) {
+    public function updateAnimeInProfile(Request $request, Anime $anime)
+    {
         try {
             $this->userService->updateAnimeInUserProfile($anime, $request->rating, $request->status);
-            
-            return response()->json(['message' => 'Anime was successfully updated.']); 
+
+            return response()->json(['message' => 'Anime was successfully updated.']);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()]);
         }
     }
-
 }

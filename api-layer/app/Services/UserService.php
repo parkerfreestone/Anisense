@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Log;
 
 class UserService
 {
-
     public function getAnimeForUserProfile(): Collection
     {
         $user = Auth::user();
@@ -19,13 +18,13 @@ class UserService
         return $user->anime;
     }
 
-    public function addAnimeToUserProfile(Anime $anime, float|null $rating, string $status): User|null
+    public function addAnimeToUserProfile(Anime $anime, ?float $rating, string $status): ?User
     {
         $user = Auth::user();
 
         try {
             $user->anime()->attach($anime->id, ['status' => $status, 'rating' => $rating]);
-        
+
         } catch (QueryException $e) {
             $errorCode = $e->getCode();
 
@@ -41,7 +40,8 @@ class UserService
         return $user;
     }
 
-    public function updateAnimeInUserProfile(Anime $anime, float|null $rating, string $status): User|null {
+    public function updateAnimeInUserProfile(Anime $anime, ?float $rating, string $status): ?User
+    {
         $user = Auth::user();
 
         try {
@@ -52,5 +52,4 @@ class UserService
 
         return $user;
     }
-    
 }

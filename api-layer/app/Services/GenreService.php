@@ -3,10 +3,9 @@
 namespace App\Services;
 
 use App\Jobs\UpdateGenresJob;
+use App\Models\Genre;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-
-use App\Models\Genre;
 
 class GenreService
 {
@@ -16,7 +15,7 @@ class GenreService
     {
         $genres = Genre::all();
 
-        if (!$genres) {
+        if (! $genres) {
             throw new \Exception('Failed to grab genres from the DB.');
         }
 
@@ -30,7 +29,7 @@ class GenreService
 
     public function updateGenresFromJikan()
     {
-        $response = Http::get(self::JIKAN_API_BASE_URL . "/genres/anime");
+        $response = Http::get(self::JIKAN_API_BASE_URL.'/genres/anime');
 
         if ($response->successful()) {
             $genres = $response->json()['data'];
@@ -47,5 +46,4 @@ class GenreService
             throw new \Exception('Failed to grab anime from the Jikan API.');
         }
     }
-
 }
