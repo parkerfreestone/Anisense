@@ -14,7 +14,6 @@ export const RequireAuthenticationLayout = ({
 
   useEffect(() => {
     if (!user && !isAuthenticated) {
-      console.log("Greg");
       navigate("/auth/login");
     }
   }, [user, isAuthenticated]);

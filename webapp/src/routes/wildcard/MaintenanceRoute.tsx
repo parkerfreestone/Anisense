@@ -6,7 +6,7 @@ export const MaintenanceRoute = () => {
       <h1 className="font-bold text-zinc-100 text-5xl">
         🚧 Anisense is Undergoing Maintenance!
       </h1>
-      <p className="my-4 text-2xl text-center text-zinc-300">
+      <p className="my-4 text-2xl text-center text-zinc-400">
         This is likely a routine databse sync and we will be back up and running
         within the next 20-30 minutes! If not check our discord to see what's
         up.

@@ -12,8 +12,6 @@ export const RootRoute = () => {
 
   const { isAuthenticated, user, getUser } = useAuthContext();
 
-  const navigate = useNavigate();
-
   const getUserIfAuthenticated = async () => {
     if (isAuthenticated && !user) {
       try {

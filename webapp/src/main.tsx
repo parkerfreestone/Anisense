@@ -13,7 +13,7 @@ import { HomeRoute } from "./routes/HomeRoute";
 
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { AuthProvider } from "./context/AuthenticationContext";
-import { ProfileRoute } from "./routes/ProfileRoute";
+import { ProfileRoute } from "./routes/profile/ProfileRoute";
 import { VerifyEmail } from "./routes/auth/VerifyEmail";
 import { MaintenanceRoute } from "./routes/wildcard/MaintenanceRoute";
 

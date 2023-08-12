@@ -35,7 +35,7 @@ class AnimeService
                 });
             }
 
-            $query->orderBy('popularity', 'asc');
+            $query->orderByRaw('CASE WHEN popularity = 0 THEN 1 ELSE 0 END, popularity asc');
 
             return $query->with('genres')->paginate($limit, ['*'], 'page', $page);
         });
