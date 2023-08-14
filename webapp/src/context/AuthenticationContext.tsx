@@ -26,7 +26,7 @@ interface SessionUser {
   username: string;
   email: string;
   email_verified_at: Date | null;
-  top_anime: any;
+  is_admin: boolean;
   created_at: Date | null;
   updated_at: Date | null;
 }

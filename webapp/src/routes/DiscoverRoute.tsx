@@ -223,6 +223,7 @@ export const DiscoverRoute = () => {
                       className="w-full h-full object-cover rounded-lg shadow-md"
                       style={{
                         display: imageLoaded[anime.mal_id] ? "block" : "none",
+                        boxShadow: `0 0 10px 0 ${anime?.average_color}`,
                       }}
                     />
                     <div
@@ -281,7 +282,7 @@ export const DiscoverRoute = () => {
           }}
           contentLabel="Anime Details"
           className="bg-zinc-900 mx-auto mt-32 max-w-2xl p-8 rounded-lg"
-          overlayClassName="fixed inset-0 bg-black/70"
+          overlayClassName="fixed inset-0 bg-black/80"
         >
           {selectedAnime && (
             <>

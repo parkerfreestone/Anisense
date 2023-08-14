@@ -50,17 +50,7 @@ class User extends Authenticatable
     public function anime()
     {
         return $this->belongsToMany(Anime::class)
-            ->withPivot('status', 'rating')
-            ->withTimestamps();
-    }
-
-    /**
-     * Get the top animes for the user.
-     */
-    public function topAnime()
-    {
-        return $this->belongsToMany(Anime::class, 'top_anime')
-            ->withPivot('ranking')
+            ->withPivot('status', 'rating', 'rank')
             ->withTimestamps();
     }
 }

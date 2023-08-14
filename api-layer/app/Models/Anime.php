@@ -30,17 +30,7 @@ class Anime extends Model
     public function users()
     {
         return $this->belongsToMany(User::class)
-            ->withPivot('status', 'rating')
-            ->withTimestamps();
-    }
-
-    /**
-     * Get the top anime users
-     */
-    public function topAnimeUsers()
-    {
-        return $this->belongsToMany(User::class, 'top_anime')
-            ->withPivot('ranking')
+            ->withPivot('status', 'rating', 'rank')
             ->withTimestamps();
     }
 
